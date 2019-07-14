@@ -12,7 +12,7 @@ function App({ isDataLoaded }) {
   useEffect(() => {
     dispatch.rooms.getRooms();
     dispatch.lights.getLights();
-  });
+  }, []);
 
   if (!isDataLoaded) {
     return (

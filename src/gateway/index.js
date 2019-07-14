@@ -22,5 +22,6 @@ hueClient.interceptors.response.use(
 export default {
   getLightsInfo: () => hueClient.get("/lights"),
   getRooms: () => hueClient.get("/groups"),
-  getScenes: () => hueClient.get("/scenes")
+  getScenes: () => hueClient.get("/scenes"),
+  setLightState: (id, state) => hueClient.put(`/lights/${id}/state`, state)
 };

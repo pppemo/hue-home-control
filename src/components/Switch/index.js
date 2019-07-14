@@ -4,11 +4,17 @@ import cx from "classnames";
 import ReactCardFlip from "react-card-flip";
 import styles from "./Switch.module.scss";
 
-const Switch = ({ lightId, lightName }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
+const Switch = ({ lightName, isOn, onClick }) => {
+  const [isFlipped, setIsFlipped] = useState(isOn);
+
+  const handleToggle = () => {
+    const newSwitchState = !isFlipped;
+    setIsFlipped(newSwitchState);
+    onClick(newSwitchState);
+  };
 
   return (
-    <div className={styles.container} onClick={() => setIsFlipped(!isFlipped)}>
+    <div className={styles.container} onClick={handleToggle}>
       <ReactCardFlip
         isFlipped={isFlipped}
         flipDirection="vertical"
@@ -27,8 +33,9 @@ const Switch = ({ lightId, lightName }) => {
 };
 
 Switch.propTypes = {
-  lightId: PropTypes.string.isRequired,
-  lightName: PropTypes.string.isRequired
+  lightName: PropTypes.string.isRequired,
+  isOn: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired
 }
 
 export default Switch;

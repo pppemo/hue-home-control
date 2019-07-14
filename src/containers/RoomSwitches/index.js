@@ -3,17 +3,26 @@ import { connect } from "react-redux";
 import Switch from "./../../components/Switch";
 import styles from "./RoomSwitches.module.scss";
 
-const RoomSwitches = ({ match, rooms, lights, isLoadingAnything }) => {
+const RoomSwitches = ({ match, rooms, lights, setLightOn, setLightOff }) => {
   const { roomId } = match.params;
   const roomLights = rooms[roomId].lights.map(id => ({
     id,
     ...lights[id]
   }));
 
+  const handleSwitchToggle = (lightId, state) =>
+    state ? setLightOn(lightId) : setLightOff(lightId);
+
   return (
     <div className={styles.switchesContainer}>
       {roomLights.map(light => (
-        <Switch key={light.id} lightId={light.id} lightName={light.name} />
+        <Switch
+          key={light.id}
+          isOn={light.state.on}
+          lightId={light.id}
+          lightName={light.name}
+          onClick={state => handleSwitchToggle(light.id, state)}
+        />
       ))}
     </div>
   );
@@ -24,4 +33,12 @@ const mapState = state => ({
   lights: state.lights
 });
 
-export default connect(mapState)(RoomSwitches);
+const mapDispatch = ({ lights }) => ({
+  setLightOn: id => lights.setLightState({ id, newState: { on: true } }),
+  setLightOff: id => lights.setLightState({ id, newState: { on: false } })
+});
+
+export default connect(
+  mapState,
+  mapDispatch
+)(RoomSwitches);
