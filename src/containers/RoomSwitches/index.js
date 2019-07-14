@@ -1,17 +1,27 @@
 import React from "react";
-import Switch from "./../../components/Switch"
-import styles from "./RoomSwitches.module.scss"
+import { connect } from "react-redux";
+import Switch from "./../../components/Switch";
+import styles from "./RoomSwitches.module.scss";
 
-const RoomSwitches = () => {
+const RoomSwitches = ({ match, rooms, lights, isLoadingAnything }) => {
+  const { roomId } = match.params;
+  const roomLights = rooms[roomId].lights.map(id => ({
+    id,
+    ...lights[id]
+  }));
+
   return (
     <div className={styles.switchesContainer}>
-      <Switch />
-      <Switch />
-      <Switch />
-      <Switch />
-      <Switch />
+      {roomLights.map(light => (
+        <Switch key={light.id} lightId={light.id} lightName={light.name} />
+      ))}
     </div>
   );
 };
 
-export default RoomSwitches;
+const mapState = state => ({
+  rooms: state.rooms,
+  lights: state.lights
+});
+
+export default connect(mapState)(RoomSwitches);

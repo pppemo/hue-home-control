@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import RoomsList from "./../../components/RoomsList";
 import styles from "./RoomSelection.module.scss";
 
-const RoomSelection = ({ rooms }) => {
+const RoomSelection = ({ rooms, isLoadingAnything }) => {
   const getRoomsObjects = () =>
     Object.entries(rooms).map(([key, obj]) => ({
       id: key,

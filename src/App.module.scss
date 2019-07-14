@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css?family=Ubuntu+Condensed&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Ubuntu+Condensed&display=swap");
 
 :global {
   body {
-    font-family: 'Ubuntu Condensed', sans-serif;
+    font-family: "Ubuntu Condensed", sans-serif;
   }
 
   a {
@@ -15,4 +15,11 @@
   background-color: #282c34;
   height: 90vh;
   padding: 5vh 5vh;
+
+  .spinnerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
 }

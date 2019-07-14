@@ -1,7 +1,7 @@
 import Gateway from "./../gateway";
 
 export default {
-  state: [],
+  state: null,
   reducers: {
     setRooms: (_, payload) => payload
   },
