@@ -1,0 +1,15 @@
+.container {
+  text-align: left;
+  width: 70%;
+  margin: 0 auto;
+
+  p.title {
+    color: white;
+    font-size: 5rem;
+  }
+
+  .items {
+    overflow-y: scroll;
+    height: 60vh;
+  }
+}

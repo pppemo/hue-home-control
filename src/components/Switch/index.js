@@ -18,7 +18,7 @@ const Switch = () => {
         </div>
 
         <div className={cx(styles.switch, styles.isActive)} key="back">
-          <div className={styles.label}>ON</div>
+          <div className={styles.label}>Test</div>
         </div>
       </ReactCardFlip>
     </div>
