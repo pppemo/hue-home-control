@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Condensed&display=swap');
+
+:global(body) {
+  font-family: 'Ubuntu Condensed', sans-serif;
+}
+
+.app {
+  text-align: center;
+  background-color: #282c34;
+  height: 90vh;
+  padding: 5vh 5vh;
+}
+
+.switchesContainer {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}

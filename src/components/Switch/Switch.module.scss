@@ -1,0 +1,29 @@
+.container {
+  min-width: 25%;
+  display: flex;
+  flex-grow: 1;
+}
+
+.switch {
+  position: absolute;
+  background-color: #618BFF;
+  border-radius:25px;
+  margin: 2vh 2vw;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.isActive {
+  background-color: orange;
+}
+
+.label {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 3rem;
+}
