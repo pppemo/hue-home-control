@@ -1,41 +1,27 @@
 import React from "react";
+import { connect } from "react-redux";
 import RoomsList from "./../../components/RoomsList";
 import styles from "./RoomSelection.module.scss";
 
-export default () => {
+const RoomSelection = ({ rooms }) => {
+  const getRoomsObjects = () =>
+    Object.entries(rooms).map(([key, obj]) => ({
+      id: key,
+      name: obj.name
+    }));
+
   return (
     <div className={styles.container}>
       <p className={styles.title}>Which room?</p>
       <div className={styles.items}>
-        <RoomsList
-          rooms={[
-            {
-              id: 1,
-              name: "Salon"
-            },
-            {
-              id: 2,
-              name: "Living room"
-            },
-            {
-              id: 3,
-              name: "Salon"
-            },
-            {
-              id: 4,
-              name: "Living room"
-            },
-            {
-              id: 5,
-              name: "Salon"
-            },
-            {
-              id: 6,
-              name: "Living room"
-            }
-          ]}
-        />
+        <RoomsList rooms={getRoomsObjects()} />
       </div>
     </div>
   );
 };
+
+const mapState = state => ({
+  rooms: state.rooms
+});
+
+export default connect(mapState)(RoomSelection);

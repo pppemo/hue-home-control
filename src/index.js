@@ -1,4 +1,6 @@
 import React from "react";
+import store from "./store";
+import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
 import "./index.css";
@@ -8,9 +10,11 @@ import * as serviceWorker from "./serviceWorker";
 require("dotenv").config();
 
 ReactDOM.render(
-  <HashRouter>
-    <App />
-  </HashRouter>,
+  <Provider store={store}>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </Provider>,
   document.getElementById("root")
 );
 

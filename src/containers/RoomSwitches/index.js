@@ -2,7 +2,7 @@ import React from "react";
 import Switch from "./../../components/Switch"
 import styles from "./RoomSwitches.module.scss"
 
-export default () => {
+const RoomSwitches = () => {
   return (
     <div className={styles.switchesContainer}>
       <Switch />
@@ -13,3 +13,5 @@ export default () => {
     </div>
   );
 };
+
+export default RoomSwitches;

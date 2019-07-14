@@ -10,6 +10,15 @@ const hueClient = axios.create({
   timeout: 30000
 });
 
+const errorHandler = response => {
+  //TODO Implement error handling
+}
+
+hueClient.interceptors.response.use(
+  response => response.data,
+  errorHandler
+)
+
 export default {
   getLightsInfo: () => hueClient.get("/lights"),
   getRooms: () => hueClient.get("/groups"),
