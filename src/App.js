@@ -10,38 +10,69 @@ import Spinner from "./components/Spinner";
 import { slide as Menu } from "react-burger-menu";
 import styles from "./App.module.scss";
 
+const SCREEN_SAVER_WAIT_TIME = 10000;
+
 function App({
   isDataLoaded,
   isScreenSaverOn,
   enableScreenSaver,
   disableScreenSaver,
-  isAnyLightOnInSelectedRoom
+  isAnyLightOnInSelectedRoom,
+  turnOnDefaultLights
 }) {
-  const [screenSaverTimeout, setScreenSaverTimeout] = useState(null);
+  const [screenSaverTimeoutObject, setScreenSaverTimeoutObject] = useState(
+    null
+  );
+  const [
+    isScreenSaverTimeoutRunning,
+    setIsScreenSaverTimeoutRunning
+  ] = useState(false);
 
   useEffect(() => {
     dispatch.rooms.getRooms();
     dispatch.lights.getLights();
   }, []);
 
-  useEffect(() => {
-    if (isAnyLightOnInSelectedRoom) {
-      clearTimeout(screenSaverTimeout);
-    } else {
-      startScreenSaverTimer();
-    }
-  }, [isAnyLightOnInSelectedRoom]);
+  useEffect(
+    () =>
+      isAnyLightOnInSelectedRoom
+        ? clearScreenSaverTimeout()
+        : setScreenSaverTimeout(),
+    [isAnyLightOnInSelectedRoom]
+  );
 
-  const startScreenSaverTimer = () => {
-    const SCREEN_SAVER_WAIT_TIME = 5000;
-    clearTimeout(screenSaverTimeout);
-    const timeout = setTimeout(enableScreenSaver, SCREEN_SAVER_WAIT_TIME);
-    setScreenSaverTimeout(timeout);
+  const setScreenSaverTimeout = () => {
+    clearTimeout(screenSaverTimeoutObject);
+    setIsScreenSaverTimeoutRunning(true);
+    const timeout = setTimeout(() => {
+      enableScreenSaver();
+      setIsScreenSaverTimeoutRunning(false);
+    }, SCREEN_SAVER_WAIT_TIME);
+    setScreenSaverTimeoutObject(timeout);
+  };
+
+  const clearScreenSaverTimeout = () => {
+    clearTimeout(screenSaverTimeoutObject);
+    setIsScreenSaverTimeoutRunning(false);
+  };
+
+  const onScreenClicked = () => {
+    if (isScreenSaverTimeoutRunning) {
+      setScreenSaverTimeout();
+    }
   };
 
   const handleScreenSaverClick = () => {
     disableScreenSaver();
-    startScreenSaverTimer();
+    setScreenSaverTimeout();
+    turnOnDefaultLights();
+  };
+
+  const handleScreenSaverEscape = ({ isOpen }) => {
+    if (!isOpen) {
+      disableScreenSaver();
+      setScreenSaverTimeout();
+    }
   };
 
   if (!isDataLoaded) {
@@ -62,6 +93,7 @@ function App({
         customBurgerIcon={false}
         customCrossIcon={false}
         isOpen={isScreenSaverOn}
+        onStateChange={handleScreenSaverEscape}
         disableAutoFocus
       >
         <button
@@ -69,7 +101,7 @@ function App({
           onClick={handleScreenSaverClick}
         />
       </Menu>
-      <div className={styles.app} onClick={startScreenSaverTimer}>
+      <div className={styles.app} onClick={onScreenClicked}>
         <Switch>
           <Route path="/room/:roomId" component={RoomSwitches} />
           <Route path="/" component={RoomSelection} />
@@ -85,9 +117,10 @@ const mapState = state => ({
   isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state)
 });
 
-const mapDispatch = ({ app }) => ({
+const mapDispatch = ({ app, lights }) => ({
   enableScreenSaver: () => app.setIsScreenSaverOn(true),
-  disableScreenSaver: () => app.setIsScreenSaverOn(false)
+  disableScreenSaver: () => app.setIsScreenSaverOn(false),
+  turnOnDefaultLights: lights.turnOnDefaultLights
 });
 
 export default connect(

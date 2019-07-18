@@ -6,8 +6,14 @@
 
 .switch {
   position: absolute;
-  background-color: #618BFF;
-  border-radius:25px;
+  background: repeating-linear-gradient(
+    45deg,
+    #606dbc,
+    #606dbc 10px,
+    #465298 10px,
+    #465298 20px
+  );
+  border-radius: 25px;
   margin: 2vh 2vw;
   top: 0;
   right: 0;
@@ -16,7 +22,13 @@
 }
 
 .isActive {
-  background-color: orange;
+  background: repeating-linear-gradient(
+    45deg,
+    #f6ba52,
+    #f6ba52 10px,
+    #ffd180 10px,
+    #ffd180 20px
+  );
 }
 
 .label {
@@ -25,5 +37,5 @@
   right: 20px;
   color: white;
   font-weight: bold;
-  font-size: 3rem;
+  font-size: 6rem;
 }

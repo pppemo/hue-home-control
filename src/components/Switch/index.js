@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import cx from "classnames";
 import ReactCardFlip from "react-card-flip";
@@ -6,6 +6,8 @@ import styles from "./Switch.module.scss";
 
 const Switch = ({ lightName, isOn, onClick }) => {
   const [isFlipped, setIsFlipped] = useState(isOn);
+
+  useEffect(() => setIsFlipped(isOn), [isOn]);
 
   const handleToggle = () => {
     const newSwitchState = !isFlipped;
@@ -25,7 +27,7 @@ const Switch = ({ lightName, isOn, onClick }) => {
         </div>
 
         <div className={cx(styles.switch, styles.isActive)} key="back">
-          <div className={styles.label}>ON</div>
+          <div className={styles.label}>{lightName}</div>
         </div>
       </ReactCardFlip>
     </div>

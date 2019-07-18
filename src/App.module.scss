@@ -25,8 +25,22 @@
 }
 
 .burgerMenuItem {
-    height: 100%;
-    width: 100%;
-    background-color: grey;
-    border: 0;
+  height: 100%;
+  width: 100%;
+  border: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #222,
+    #222 20px,
+    #333 20px,
+    #333 40px
+  );
+  background-size: 200% 200%;
+  animation: barberpole 10s linear infinite;
+}
+
+@keyframes barberpole {
+  100% {
+    background-position: 100% 100%;
+  }
 }
