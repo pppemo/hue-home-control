@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Switch from "./../../components/Switch";
+import { dispatch } from "./../../store";
 import styles from "./RoomSwitches.module.scss";
 
 const RoomSwitches = ({ match, rooms, lights, setLightOn, setLightOff }) => {
   const { roomId } = match.params;
+
+  useEffect(() => {
+    dispatch.app.setSelectedRoomId(roomId);
+  }, []);
+
   const roomLights = rooms[roomId].lights.map(id => ({
     id,
     ...lights[id]

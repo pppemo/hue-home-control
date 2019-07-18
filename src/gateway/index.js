@@ -15,6 +15,7 @@ const errorHandler = response => {
 }
 
 hueClient.interceptors.response.use(
+  //TODO Implement Hue error handling with 200 status
   response => response.data,
   errorHandler
 )
