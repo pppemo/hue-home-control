@@ -30,7 +30,7 @@ function App({
 
   useEffect(() => {
     dispatch.rooms.getRooms();
-    dispatch.lights.getLights();
+    setGetLightsTimeout();
   }, []);
 
   useEffect(
@@ -40,6 +40,11 @@ function App({
         : setScreenSaverTimeout(),
     [isAnyLightOnInSelectedRoom]
   );
+
+  const setGetLightsTimeout = () => {
+    dispatch.lights.getLights();
+    setTimeout(setGetLightsTimeout, 5000);
+  }
 
   const setScreenSaverTimeout = () => {
     clearTimeout(screenSaverTimeoutObject);
