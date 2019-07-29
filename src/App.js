@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { isDataLoaded } from "./store/selectors/global";
 import { isAnyLightOnInSelectedRoom } from "./store/selectors/lights";
-import { Route, Switch } from "react-router";
 import RoomSelection from "./containers/RoomSelection";
 import RoomSwitches from "./containers/RoomSwitches";
 import { dispatch } from "./store";
 import Spinner from "./components/Spinner";
 import { slide as Menu } from "react-burger-menu";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from "react-responsive-carousel";
 import styles from "./App.module.scss";
 
 const SCREEN_SAVER_WAIT_TIME = 10000;
@@ -18,11 +19,15 @@ function App({
   enableScreenSaver,
   disableScreenSaver,
   isAnyLightOnInSelectedRoom,
-  turnOnDefaultLights
+  turnOnDefaultLights,
+  selectedRoomId
 }) {
   const [screenSaverTimeoutObject, setScreenSaverTimeoutObject] = useState(
     null
   );
+
+  const [slideId, setSlideId] = useState(0);
+
   const [
     isScreenSaverTimeoutRunning,
     setIsScreenSaverTimeoutRunning
@@ -44,7 +49,7 @@ function App({
   const setGetLightsTimeout = () => {
     dispatch.lights.getLights();
     setTimeout(setGetLightsTimeout, 5000);
-  }
+  };
 
   const setScreenSaverTimeout = () => {
     clearTimeout(screenSaverTimeoutObject);
@@ -80,6 +85,17 @@ function App({
     }
   };
 
+  const buildSlides = () => {
+    const slides = [
+      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(1)} />
+    ];
+
+    if (selectedRoomId) {
+      slides.push(<RoomSwitches key="RoomSwitches" />);
+    }
+    return slides;
+  };
+
   if (!isDataLoaded) {
     return (
       <div className={styles.app}>
@@ -107,10 +123,16 @@ function App({
         />
       </Menu>
       <div className={styles.app} onClick={onScreenClicked}>
-        <Switch>
-          <Route path="/room/:roomId" component={RoomSwitches} />
-          <Route path="/" component={RoomSelection} />
-        </Switch>
+        <Carousel
+          selectedItem={slideId}
+          onChange={id => setSlideId(id)}
+          showArrows={false}
+          showThumbs={false}
+          showStatus={false}
+          showIndicators={false}
+        >
+          {buildSlides()}
+        </Carousel>
       </div>
     </>
   );
@@ -119,7 +141,8 @@ function App({
 const mapState = state => ({
   isDataLoaded: isDataLoaded(state),
   isScreenSaverOn: state.app.isScreenSaverOn,
-  isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state)
+  isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
+  selectedRoomId: state.app.selectedRoomId
 });
 
 const mapDispatch = ({ app, lights }) => ({
