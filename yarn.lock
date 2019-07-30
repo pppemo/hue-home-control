@@ -9035,6 +9035,11 @@ react-scripts@3.0.1:
   optionalDependencies:
     fsevents "2.0.6"
 
+react-simple-idle-monitor@0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/react-simple-idle-monitor/-/react-simple-idle-monitor-0.3.3.tgz#57069ac52aa4014956eb29f4f9621abb0e4ae06d"
+  integrity sha512-5XwGJ+3QnDHpFPYzwz9hD9t11eF+e3QeJK41ZbHODJd5exu4ggLWbxuxYoHuqYr4EHEFkZRsvbPyIeIfV9Xo1Q==
+
 react-spinners@0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.5.4.tgz#58166f8bf84cbf06dd7accad4b94a5797cfea9b9"

@@ -8,6 +8,7 @@ import { dispatch } from "./store";
 import Spinner from "./components/Spinner";
 import { slide as Menu } from "react-burger-menu";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import IdleMonitor from "react-simple-idle-monitor";
 import { Carousel } from "react-responsive-carousel";
 import styles from "./App.module.scss";
 
@@ -22,67 +23,18 @@ function App({
   turnOnDefaultLights,
   selectedRoomId
 }) {
-  const [screenSaverTimeoutObject, setScreenSaverTimeoutObject] = useState(
-    null
-  );
-
   const [slideId, setSlideId] = useState(0);
-
-  const [
-    isScreenSaverTimeoutRunning,
-    setIsScreenSaverTimeoutRunning
-  ] = useState(false);
+  const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
   useEffect(() => {
     dispatch.rooms.getRooms();
-    setGetLightsTimeout();
+    dispatch.lights.getLights();
+    createDataPollingInterval();
   }, []);
 
-  useEffect(
-    () =>
-      isAnyLightOnInSelectedRoom
-        ? clearScreenSaverTimeout()
-        : setScreenSaverTimeout(),
-    [isAnyLightOnInSelectedRoom]
-  );
-
-  const setGetLightsTimeout = () => {
-    dispatch.lights.getLights();
-    setTimeout(setGetLightsTimeout, 5000);
-  };
-
-  const setScreenSaverTimeout = () => {
-    clearTimeout(screenSaverTimeoutObject);
-    setIsScreenSaverTimeoutRunning(true);
-    const timeout = setTimeout(() => {
-      enableScreenSaver();
-      setIsScreenSaverTimeoutRunning(false);
-    }, SCREEN_SAVER_WAIT_TIME);
-    setScreenSaverTimeoutObject(timeout);
-  };
-
-  const clearScreenSaverTimeout = () => {
-    clearTimeout(screenSaverTimeoutObject);
-    setIsScreenSaverTimeoutRunning(false);
-  };
-
-  const onScreenClicked = () => {
-    if (isScreenSaverTimeoutRunning) {
-      setScreenSaverTimeout();
-    }
-  };
-
-  const handleScreenSaverClick = () => {
-    disableScreenSaver();
-    setScreenSaverTimeout();
-    turnOnDefaultLights();
-  };
-
-  const handleScreenSaverEscape = ({ isOpen }) => {
-    if (!isOpen) {
-      disableScreenSaver();
-      setScreenSaverTimeout();
-    }
+  const createDataPollingInterval = () => {
+    const interval = setInterval(() => dispatch.lights.getLights(), 5000);
+    setDataPollingInterval(interval);
   };
 
   const buildSlides = () => {
@@ -96,6 +48,18 @@ function App({
     return slides;
   };
 
+  const onUserActive = () => {
+    dispatch.lights.getLights();
+    disableScreenSaver();
+    createDataPollingInterval();
+    selectedRoomId && turnOnDefaultLights();
+  };
+
+  const onUserIdle = () => {
+    enableScreenSaver();
+    clearInterval(dataPollingInterval);
+  };
+
   if (!isDataLoaded) {
     return (
       <div className={styles.app}>
@@ -107,34 +71,36 @@ function App({
   }
 
   return (
-    <>
-      <Menu
-        width="100%"
-        disableOverlayClick
-        customBurgerIcon={false}
-        customCrossIcon={false}
-        isOpen={isScreenSaverOn}
-        onStateChange={handleScreenSaverEscape}
-        disableAutoFocus
-      >
-        <button
-          className={styles.burgerMenuItem}
-          onClick={handleScreenSaverClick}
-        />
-      </Menu>
-      <div className={styles.app} onClick={onScreenClicked}>
-        <Carousel
-          selectedItem={slideId}
-          onChange={id => setSlideId(id)}
-          showArrows={false}
-          showThumbs={false}
-          showStatus={false}
-          showIndicators={false}
+    <IdleMonitor
+      timeout={SCREEN_SAVER_WAIT_TIME}
+      onIdle={onUserIdle}
+      onActive={onUserActive}
+    >
+      <>
+        <Menu
+          width="100%"
+          disableOverlayClick
+          customBurgerIcon={false}
+          customCrossIcon={false}
+          isOpen={isScreenSaverOn}
+          disableAutoFocus
         >
-          {buildSlides()}
-        </Carousel>
-      </div>
-    </>
+          <div className={styles.burgerMenuItem} />
+        </Menu>
+        <div className={styles.app}>
+          <Carousel
+            selectedItem={slideId}
+            onChange={id => setSlideId(id)}
+            showArrows={false}
+            showThumbs={false}
+            showStatus={false}
+            showIndicators={false}
+          >
+            {buildSlides()}
+          </Carousel>
+        </div>
+      </>
+    </IdleMonitor>
   );
 }
 
