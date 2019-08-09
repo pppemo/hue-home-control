@@ -12,7 +12,7 @@ import IdleMonitor from "react-simple-idle-monitor";
 import { Carousel } from "react-responsive-carousel";
 import styles from "./App.module.scss";
 
-const SCREEN_SAVER_WAIT_TIME = 10000;
+const SCREEN_SAVER_WAIT_TIME = 5000;
 
 function App({
   isDataLoaded,
@@ -39,7 +39,10 @@ function App({
 
   const buildSlides = () => {
     const slides = [
-      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(1)} />
+      <RoomSelection
+        key="RoomSelection"
+        onRoomSelected={() => setSlideId(1)}
+      />
     ];
 
     if (selectedRoomId) {
@@ -56,7 +59,7 @@ function App({
   };
 
   const onUserIdle = () => {
-    enableScreenSaver();
+    !isAnyLightOnInSelectedRoom && enableScreenSaver();
     clearInterval(dataPollingInterval);
   };
 

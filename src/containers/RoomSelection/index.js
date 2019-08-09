@@ -12,10 +12,10 @@ const RoomSelection = ({ rooms, onRoomSelected }) => {
       name: obj.name
     }));
 
-  const handleRoomSelection = roomId => {
-    onRoomSelected && onRoomSelected(roomId);
-    dispatch.app.setSelectedRoomId(roomId);
-  };
+  const handleRoomSelection = roomId =>
+    dispatch.app
+      .setSelectedRoomId(roomId)
+      .then(() => onRoomSelected && onRoomSelected(roomId));
 
   return (
     <div className={styles.container}>
