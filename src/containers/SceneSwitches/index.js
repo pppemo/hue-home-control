@@ -22,6 +22,7 @@ const SceneSwitches = ({ selectedRoomId, scenes, recallScene }) => {
     <div className={styles.switchesContainer}>
       {scenesArray.map(scene => (
         <Switch
+          isStateless
           key={scene.id}
           isOn={false}
           lightName={scene.name}
