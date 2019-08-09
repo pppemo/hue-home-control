@@ -24,5 +24,6 @@ export default {
   getLightsInfo: () => hueClient.get("/lights"),
   getRooms: () => hueClient.get("/groups"),
   getScenes: () => hueClient.get("/scenes"),
-  setLightState: (id, state) => hueClient.put(`/lights/${id}/state`, state)
+  setLightState: (id, state) => hueClient.put(`/lights/${id}/state`, state),
+  setGroupState: (id, state) => hueClient.put(`/groups/${id}/action`, state)
 };

@@ -4,6 +4,7 @@ import { isDataLoaded } from "./store/selectors/global";
 import { isAnyLightOnInSelectedRoom } from "./store/selectors/lights";
 import RoomSelection from "./containers/RoomSelection";
 import RoomSwitches from "./containers/RoomSwitches";
+import SceneSwitches from "./containers/SceneSwitches";
 import { dispatch } from "./store";
 import Spinner from "./components/Spinner";
 import { slide as Menu } from "react-burger-menu";
@@ -33,6 +34,7 @@ function App({
   useEffect(() => {
     dispatch.rooms.getRooms();
     dispatch.lights.getLights();
+    dispatch.scenes.getScenes();
     createDataPollingInterval();
   }, []);
 
@@ -52,6 +54,7 @@ function App({
 
     if (selectedRoomId) {
       slides.push(<RoomSwitches key="RoomSwitches" />);
+      slides.push(<SceneSwitches key="SceneSwitches" />);
     }
     return slides;
   };

@@ -24,7 +24,6 @@ const RoomSwitches = ({
         <Switch
           key={light.id}
           isOn={light.state.on}
-          lightId={light.id}
           lightName={light.name}
           onClick={state => handleSwitchToggle(light.id, state)}
         />
