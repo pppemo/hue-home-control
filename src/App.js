@@ -12,7 +12,7 @@ import IdleMonitor from "react-simple-idle-monitor";
 import { Carousel } from "react-responsive-carousel";
 import styles from "./App.module.scss";
 
-const SCREEN_SAVER_WAIT_TIME = 5000;
+const SCREEN_SAVER_WAIT_TIME = 30000;
 
 function App({
   isDataLoaded,
@@ -23,6 +23,10 @@ function App({
   turnOnDefaultLights,
   selectedRoomId
 }) {
+  const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
+    SCREEN_SAVER_WAIT_TIME
+  );
+  const [isIdleMonitorActive, setIsIdleMonitorActive] = useState(true);
   const [slideId, setSlideId] = useState(0);
   const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
@@ -32,6 +36,10 @@ function App({
     createDataPollingInterval();
   }, []);
 
+  useEffect(() => {
+    setIsIdleMonitorActive(!isAnyLightOnInSelectedRoom);
+  }, [isAnyLightOnInSelectedRoom]);
+
   const createDataPollingInterval = () => {
     const interval = setInterval(() => dispatch.lights.getLights(), 5000);
     setDataPollingInterval(interval);
@@ -39,10 +47,7 @@ function App({
 
   const buildSlides = () => {
     const slides = [
-      <RoomSelection
-        key="RoomSelection"
-        onRoomSelected={() => setSlideId(1)}
-      />
+      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(1)} />
     ];
 
     if (selectedRoomId) {
@@ -52,15 +57,19 @@ function App({
   };
 
   const onUserActive = () => {
-    dispatch.lights.getLights();
-    disableScreenSaver();
     createDataPollingInterval();
-    selectedRoomId && turnOnDefaultLights();
+    if (isScreenSaverOn) {
+      selectedRoomId &&
+        turnOnDefaultLights().then(() => dispatch.lights.getLights());
+      disableScreenSaver();
+    }
   };
 
   const onUserIdle = () => {
-    !isAnyLightOnInSelectedRoom && enableScreenSaver();
-    clearInterval(dataPollingInterval);
+    if (!isAnyLightOnInSelectedRoom) {
+      enableScreenSaver();
+      clearInterval(dataPollingInterval);
+    }
   };
 
   if (!isDataLoaded) {
@@ -75,9 +84,12 @@ function App({
 
   return (
     <IdleMonitor
-      timeout={SCREEN_SAVER_WAIT_TIME}
+      timeout={idleMonitorTimeout}
       onIdle={onUserIdle}
       onActive={onUserActive}
+      onStop={() => setIdleMonitorTimeout(0)}
+      onRun={() => setIdleMonitorTimeout(SCREEN_SAVER_WAIT_TIME)}
+      enabled={isIdleMonitorActive}
     >
       <>
         <Menu
