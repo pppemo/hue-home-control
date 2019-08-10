@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { dispatch } from "./../../store";
 import Switch from "./../../components/Switch";
 import styles from "./RoomSwitches.module.scss";
 
@@ -15,8 +16,10 @@ const RoomSwitches = ({
     ...lights[id]
   }));
 
-  const handleSwitchToggle = (lightId, state) =>
+  const handleSwitchToggle = (lightId, state) => {
+    dispatch.app.resetSelectedRoomSceneId();
     state ? setLightOn(lightId) : setLightOff(lightId);
+  };
 
   return (
     <div className={styles.switchesContainer}>

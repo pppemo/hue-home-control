@@ -3,16 +3,21 @@ import PropTypes from "prop-types";
 import cx from "classnames";
 import styles from "./Switch.module.scss";
 
-const Switch = ({ lightName, isOn: isOnProp, onClick, isStateless }) => {
+const Switch = ({
+  lightName,
+  isOn: isOnProp,
+  onClick,
+  isTurningOffDisabled
+}) => {
   const [isOn, setIsOn] = useState(isOnProp);
 
   const handleToggle = () => {
     onClick(!isOn);
-    !isStateless && setIsOn(!isOn);
+    !isTurningOffDisabled && !isOn && setIsOn(!isOn);
   };
 
   useEffect(() => {
-    !isStateless && setIsOn(isOnProp);
+    setIsOn(isOnProp);
   }, [isOnProp]);
 
   return (
@@ -28,11 +33,11 @@ Switch.propTypes = {
   lightName: PropTypes.string.isRequired,
   isOn: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-  isStateless: PropTypes.bool
+  isTurningOffDisabled: PropTypes.bool
 };
 
 Switch.propTypes = {
-  isStateless: false
+  isTurningOffDisabled: false
 };
 
 export default Switch;

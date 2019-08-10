@@ -1,8 +1,8 @@
 .container {
   position: relative;
-  min-width: 25%;
+  min-width: 33.333%;
   display: flex;
-  flex-grow: 1;
+  flex-grow: 0;
 }
 
 .switch {
@@ -34,6 +34,7 @@
 
 .label {
   position: absolute;
+  text-align: right;
   bottom: 20px;
   right: 20px;
   color: white;

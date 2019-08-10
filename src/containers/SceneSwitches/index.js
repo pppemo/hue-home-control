@@ -4,7 +4,12 @@ import { dispatch } from "./../../store";
 import Switch from "./../../components/Switch";
 import styles from "./SceneSwitches.module.scss";
 
-const SceneSwitches = ({ selectedRoomId, scenes, recallScene }) => {
+const SceneSwitches = ({
+  selectedRoomId,
+  selectedRoomSceneId,
+  scenes,
+  recallScene
+}) => {
   const scenesArray = Object.entries(scenes)
     .map(([key, props]) => ({
       key,
@@ -14,17 +19,18 @@ const SceneSwitches = ({ selectedRoomId, scenes, recallScene }) => {
     .filter(scene => scene.group === selectedRoomId && !scene.recycle);
 
   const handleSwitchToggle = sceneId =>
-    recallScene(selectedRoomId, sceneId).then(() =>
-      dispatch.lights.getLights()
-    );
+    recallScene(selectedRoomId, sceneId).then(() => {
+      dispatch.app.setSelectedRoomSceneId(sceneId);
+      dispatch.lights.getLights();
+    });
 
   return (
     <div className={styles.switchesContainer}>
       {scenesArray.map(scene => (
         <Switch
-          isStateless
+          isTurningOffDisabled
           key={scene.id}
-          isOn={false}
+          isOn={scene.id === selectedRoomSceneId}
           lightName={scene.name}
           onClick={() => handleSwitchToggle(scene.id)}
         />
@@ -35,7 +41,8 @@ const SceneSwitches = ({ selectedRoomId, scenes, recallScene }) => {
 
 const mapState = state => ({
   scenes: state.scenes,
-  selectedRoomId: state.app.selectedRoomId
+  selectedRoomId: state.app.selectedRoomId,
+  selectedRoomSceneId: state.app.selectedRoomSceneId
 });
 
 const mapDispatch = ({ rooms }) => ({
