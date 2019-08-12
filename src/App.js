@@ -60,19 +60,19 @@ function App({
   };
 
   const onUserActive = () => {
-    createDataPollingInterval();
-    if (isScreenSaverOn) {
-      selectedRoomId &&
-        turnOnDefaultLights().then(() => dispatch.lights.getLights());
-      disableScreenSaver();
-    }
+    // createDataPollingInterval();
+    // if (isScreenSaverOn) {
+    //   selectedRoomId &&
+    //     turnOnDefaultLights().then(() => dispatch.lights.getLights());
+    //   disableScreenSaver();
+    // }
   };
 
   const onUserIdle = () => {
-    if (!isAnyLightOnInSelectedRoom) {
-      enableScreenSaver();
-      clearInterval(dataPollingInterval);
-    }
+    // if (!isAnyLightOnInSelectedRoom) {
+    //   enableScreenSaver();
+    //   clearInterval(dataPollingInterval);
+    // }
   };
 
   if (!isDataLoaded) {

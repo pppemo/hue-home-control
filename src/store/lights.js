@@ -12,7 +12,10 @@ export default {
         ...state,
         [id]: {
           ...lightObject,
-          state: newState
+          state: {
+            ...state[id].state,
+            ...newState
+          }
         }
       };
     }

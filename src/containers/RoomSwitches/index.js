@@ -28,6 +28,7 @@ const RoomSwitches = ({
           key={light.id}
           isOn={light.state.on}
           lightName={light.name}
+          isDisabled={!light.state.reachable}
           onClick={state => handleSwitchToggle(light.id, state)}
         />
       ))}

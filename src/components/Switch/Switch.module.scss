@@ -32,6 +32,16 @@
   );
 }
 
+.isDisabled {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #222,
+    #222 10px,
+    #333 10px,
+    #333 20px
+  );
+}
+
 .label {
   position: absolute;
   text-align: right;
