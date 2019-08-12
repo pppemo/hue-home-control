@@ -47,7 +47,7 @@ const mapState = state => ({
 
 const mapDispatch = ({ rooms }) => ({
   recallScene: (roomId, sceneId) =>
-    rooms.setRoomState({ roomId, newState: { scene: sceneId } })
+    rooms.setRoomState({ id: roomId, newState: { scene: sceneId } })
 });
 
 export default connect(

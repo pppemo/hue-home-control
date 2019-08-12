@@ -12,7 +12,10 @@ export default {
         ...state,
         [id]: {
           ...groupObject,
-          state: newState
+          state: {
+            ...state[id].state,
+            ...newState
+          }
         }
       };
     }
@@ -26,6 +29,6 @@ export default {
       const { id, newState: state } = roomState;
       await Gateway.setGroupState(id, state);
       dispatch.rooms.setState({ id, state });
-    },
+    }
   })
 };
