@@ -11,9 +11,10 @@ import { slide as Menu } from "react-burger-menu";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import IdleMonitor from "react-simple-idle-monitor";
 import { Carousel } from "react-responsive-carousel";
+import { fullyApi } from "./helpers/fully";
 import styles from "./App.module.scss";
 
-const SCREEN_SAVER_WAIT_TIME = 30000;
+const SCREEN_SAVER_WAIT_TIME = 5000;
 
 function App({
   isDataLoaded,
@@ -36,6 +37,11 @@ function App({
     dispatch.lights.getLights();
     dispatch.scenes.getScenes();
     createDataPollingInterval();
+    fullyApi(
+      "bind",
+      "onMotion",
+      'document.dispatchEvent(new KeyboardEvent("keydown"));'
+    );
   }, []);
 
   useEffect(() => {
@@ -59,20 +65,26 @@ function App({
     return slides;
   };
 
-  const onUserActive = () => {
-    // createDataPollingInterval();
-    // if (isScreenSaverOn) {
-    //   selectedRoomId &&
-    //     turnOnDefaultLights().then(() => dispatch.lights.getLights());
-    //   disableScreenSaver();
-    // }
+  const onUserActive = event => {
+    const {
+      event: { type }
+    } = event;
+    createDataPollingInterval();
+    if (isScreenSaverOn) {
+      selectedRoomId &&
+        type === "touchstart" &&
+        turnOnDefaultLights().then(() => dispatch.lights.getLights());
+      disableScreenSaver();
+      fullyApi("setScreenBrightness", 128);
+    }
   };
 
   const onUserIdle = () => {
-    // if (!isAnyLightOnInSelectedRoom) {
-    //   enableScreenSaver();
-    //   clearInterval(dataPollingInterval);
-    // }
+    if (!isAnyLightOnInSelectedRoom) {
+      enableScreenSaver();
+      fullyApi("setScreenBrightness", 0);
+      clearInterval(dataPollingInterval);
+    }
   };
 
   if (!isDataLoaded) {
