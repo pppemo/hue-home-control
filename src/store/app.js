@@ -1,6 +1,9 @@
+import Cookies from "js-cookie"
+import { COOKIES } from "./../constants"
+
 export default {
   state: {
-    selectedRoomId: null,
+    selectedRoomId: Cookies.get(COOKIES.SELECTED_ROOM_ID),
     isScreenSaverOn: false,
     selectedRoomSceneId: null
   },

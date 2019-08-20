@@ -1,0 +1,3 @@
+export const COOKIES = {
+  SELECTED_ROOM_ID: "HHC_SELECTED_ROOM_ID"
+};

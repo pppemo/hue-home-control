@@ -29,7 +29,7 @@ function App({
     SCREEN_SAVER_WAIT_TIME
   );
   const [isIdleMonitorActive, setIsIdleMonitorActive] = useState(true);
-  const [slideId, setSlideId] = useState(0);
+  const [slideId, setSlideId] = useState(selectedRoomId ? 1 : 0);
   const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
   useEffect(() => {

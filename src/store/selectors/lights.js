@@ -8,12 +8,12 @@ export const isAnyLightOnInSelectedRoom = createSelector(
   [roomsSelector, lightsSelector, appSelector],
   (rooms, lights, app) => {
     const { selectedRoomId } = app;
-    if (!rooms || !rooms[selectedRoomId]) {
-      return false;
+    if (selectedRoomId && rooms && lights) {
+      return rooms[selectedRoomId].lights
+        .map(id => lights[id].state.on)
+        .reduce((prev, current) => prev || current, false);
     }
 
-    return rooms[selectedRoomId].lights
-      .map(id => lights[id].state.on)
-      .reduce((prev, current) => prev || current, false);
+    return false;
   }
 );
