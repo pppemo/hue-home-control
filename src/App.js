@@ -16,6 +16,7 @@ import { fullyApi } from "./helpers/fully";
 import styles from "./App.module.scss";
 
 const SCREEN_SAVER_WAIT_TIME = 5000;
+const BACK_TO_MAIN_SCREEN_TIME = 3500;
 
 function App({
   isDataLoaded,
@@ -30,7 +31,6 @@ function App({
   const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
     SCREEN_SAVER_WAIT_TIME
   );
-  const [isIdleMonitorActive, setIsIdleMonitorActive] = useState(true);
   const [slideId, setSlideId] = useState(selectedRoomId ? 1 : 0);
   const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
@@ -45,10 +45,6 @@ function App({
       'document.dispatchEvent(new KeyboardEvent("keydown"));'
     );
   }, []);
-
-  useEffect(() => {
-    setIsIdleMonitorActive(!isAnyLightOnInSelectedRoom);
-  }, [isAnyLightOnInSelectedRoom]);
 
   const createDataPollingInterval = () => {
     const interval = setInterval(() => dispatch.lights.getLights(), 5000);
@@ -84,12 +80,12 @@ function App({
   };
 
   const onUserIdle = () => {
+    console.log('onIdle')
     if (!isAnyLightOnInSelectedRoom) {
       enableScreenSaver();
       fullyApi("setScreenBrightness", 0);
       clearInterval(dataPollingInterval);
     }
-    setSlideId(1);
   };
 
   if (!isDataLoaded) {
@@ -104,37 +100,41 @@ function App({
 
   return (
     <IdleMonitor
-      timeout={idleMonitorTimeout}
-      onIdle={onUserIdle}
-      onActive={onUserActive}
-      onStop={() => setIdleMonitorTimeout(0)}
-      onRun={() => setIdleMonitorTimeout(SCREEN_SAVER_WAIT_TIME)}
-      enabled={isIdleMonitorActive}
+      timeout={BACK_TO_MAIN_SCREEN_TIME}
+      onIdle={() => setSlideId(1)}
     >
-      <>
-        <Menu
-          width="100%"
-          disableOverlayClick
-          customBurgerIcon={false}
-          customCrossIcon={false}
-          isOpen={isScreenSaverOn}
-          disableAutoFocus
-        >
-          <div className={styles.burgerMenuItem} />
-        </Menu>
-        <div className={styles.app}>
-          <Carousel
-            selectedItem={slideId}
-            onChange={id => setSlideId(id)}
-            showArrows={false}
-            showThumbs={false}
-            showStatus={false}
-            showIndicators={false}
+      <IdleMonitor
+        timeout={idleMonitorTimeout}
+        onIdle={onUserIdle}
+        onActive={onUserActive}
+        onStop={() => setIdleMonitorTimeout(0)}
+        onRun={() => setIdleMonitorTimeout(SCREEN_SAVER_WAIT_TIME)}
+      >
+        <>
+          <Menu
+            width="100%"
+            disableOverlayClick
+            customBurgerIcon={false}
+            customCrossIcon={false}
+            isOpen={isScreenSaverOn}
+            disableAutoFocus
           >
-            {buildSlides()}
-          </Carousel>
-        </div>
-      </>
+            <div className={styles.burgerMenuItem} />
+          </Menu>
+          <div className={styles.app}>
+            <Carousel
+              selectedItem={slideId}
+              onChange={id => setSlideId(id)}
+              showArrows={false}
+              showThumbs={false}
+              showStatus={false}
+              showIndicators={false}
+            >
+              {buildSlides()}
+            </Carousel>
+          </div>
+        </>
+      </IdleMonitor>
     </IdleMonitor>
   );
 }
