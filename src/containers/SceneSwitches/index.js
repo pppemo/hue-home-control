@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { dispatch } from "./../../store";
+import { isAnyLightOnInSelectedRoom } from "./../../store/selectors/lights";
 import Switch from "./../../components/Switch";
 import { COOKIES } from "./../../constants";
 import Cookies from "js-cookie";
@@ -11,7 +12,9 @@ const SceneSwitches = ({
   selectedRoomSceneId,
   defaultSceneId,
   scenes,
-  recallScene
+  recallScene,
+  turnOffLightsInSelectedRoom,
+  isAnyLightOnInSelectedRoom
 }) => {
   const scenesArray = Object.entries(scenes)
     .map(([key, props]) => ({
@@ -20,11 +23,17 @@ const SceneSwitches = ({
     }))
     .filter(scene => scene.group === selectedRoomId && !scene.recycle);
 
-  const handleSwitchToggle = sceneId =>
-    recallScene(selectedRoomId, sceneId).then(() => {
-      dispatch.app.setSelectedRoomSceneId(sceneId);
-      dispatch.lights.getLights();
-    });
+  const handleSwitchToggle = (isOn, sceneId) => {
+    if (isOn) {
+      recallScene(selectedRoomId, sceneId).then(() =>
+        dispatch.app
+          .setSelectedRoomSceneId(sceneId)
+          .then(() => dispatch.lights.getLights())
+      );
+    } else {
+      turnOffLightsInSelectedRoom().then(() => dispatch.lights.getLights());
+    }
+  };
 
   const handleSwitchLongPress = sceneId => {
     if (sceneId === defaultSceneId) {
@@ -40,15 +49,19 @@ const SceneSwitches = ({
     <div className={styles.switchesContainer}>
       {scenesArray.map(scene => (
         <Switch
-          isTurningOffDisabled
           key={scene.id}
           isFavourite={scene.id === defaultSceneId}
           isOn={scene.id === selectedRoomSceneId}
           lightName={scene.name}
-          onPress={() => handleSwitchToggle(scene.id)}
+          onPress={isOn => handleSwitchToggle(isOn, scene.id)}
           onLongPress={() => handleSwitchLongPress(scene.id)}
         />
       ))}
+      <Switch
+        isOn={isAnyLightOnInSelectedRoom && selectedRoomSceneId === null}
+        lightName="Custom"
+        onPress={() => handleSwitchToggle(false)}
+      />
     </div>
   );
 };
@@ -57,12 +70,14 @@ const mapState = state => ({
   scenes: state.scenes,
   selectedRoomId: state.app.selectedRoomId,
   defaultSceneId: state.app.defaultSceneId,
-  selectedRoomSceneId: state.app.selectedRoomSceneId
+  selectedRoomSceneId: state.app.selectedRoomSceneId,
+  isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state)
 });
 
 const mapDispatch = ({ rooms }) => ({
   recallScene: (roomId, sceneId) =>
-    rooms.setRoomState({ id: roomId, newState: { scene: sceneId } })
+    rooms.setRoomState({ id: roomId, newState: { scene: sceneId } }),
+  turnOffLightsInSelectedRoom: () => rooms.turnOffLightsInSelectedRoom()
 });
 
 export default connect(

@@ -31,6 +31,14 @@ export default {
       await Gateway.setGroupState(id, state);
       dispatch.rooms.setState({ id, state });
     },
+    async turnOffLightsInSelectedRoom() {
+      const {
+        app: { selectedRoomId }
+      } = store.getState();
+        await Gateway.setGroupState(selectedRoomId, { on: false });
+        dispatch.rooms.setState({ id: selectedRoomId, state: { on: false } });
+        dispatch.app.setSelectedRoomSceneId(null);
+    },
     async turnOnDefaultSceneInSelectedRoom() {
       const {
         app: { defaultSceneId, selectedRoomId }

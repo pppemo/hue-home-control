@@ -10,15 +10,11 @@ const Switch = ({
   isDisabled,
   isFavourite,
   onPress,
-  onLongPress,
-  isTurningOffDisabled
+  onLongPress
 }) => {
   const [isOn, setIsOn] = useState(isOnProp);
 
-  const handleToggle = () => {
-    onPress(!isOn);
-    !isTurningOffDisabled && !isOn && setIsOn(!isOn);
-  };
+  const handleToggle = () => onPress(!isOn);
 
   useEffect(() => {
     setIsOn(isOnProp);
@@ -58,11 +54,9 @@ Switch.propTypes = {
   isFavourite: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
   onLongPress: PropTypes.func,
-  isTurningOffDisabled: PropTypes.bool
 };
 
 Switch.defaultProps = {
-  isTurningOffDisabled: false,
   isDisabled: false,
   onLongPress: undefined,
   isFavourite: false

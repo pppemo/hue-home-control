@@ -7,6 +7,7 @@ const CarouselIndicator = ({ numberOfItems, currentItemIndex, className }) => (
   <div className={className}>
     {Array.from(new Array(numberOfItems)).map((_, index) => (
       <div
+      key={currentItemIndex + index}
         className={cx(styles.indicator, {
           [styles.active]: index === currentItemIndex
         })}
@@ -17,7 +18,7 @@ const CarouselIndicator = ({ numberOfItems, currentItemIndex, className }) => (
 
 CarouselIndicator.propTypes = {
   numberOfItems: PropTypes.number.isRequired,
-  currentItemIndes: PropTypes.number.isRequired,
+  currentItemIndex: PropTypes.number.isRequired,
   className: PropTypes.string
 };
 
