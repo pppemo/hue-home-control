@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { isDataLoaded } from "./store/selectors/global";
 import { isAnyLightOnInSelectedRoom } from "./store/selectors/lights";
+import { hasScenes } from "./store/selectors/scenes";
 import RoomSelection from "./containers/RoomSelection";
 import RoomSwitches from "./containers/RoomSwitches";
 import SceneSwitches from "./containers/SceneSwitches";
@@ -23,7 +24,8 @@ function App({
   disableScreenSaver,
   isAnyLightOnInSelectedRoom,
   turnOnDefaultSceneInSelectedRoom,
-  selectedRoomId
+  selectedRoomId,
+  hasScenes
 }) {
   const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
     SCREEN_SAVER_WAIT_TIME
@@ -55,12 +57,12 @@ function App({
 
   const buildSlides = () => {
     const slides = [
-      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(2)} />
+      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(1)} />
     ];
 
     if (selectedRoomId) {
+      hasScenes && slides.push(<SceneSwitches key="SceneSwitches" />);
       slides.push(<RoomSwitches key="RoomSwitches" />);
-      slides.push(<SceneSwitches key="SceneSwitches" />);
     }
     return slides;
   };
@@ -73,7 +75,9 @@ function App({
     if (isScreenSaverOn) {
       selectedRoomId &&
         type === "touchstart" &&
-        turnOnDefaultSceneInSelectedRoom().then(() => dispatch.lights.getLights());
+        turnOnDefaultSceneInSelectedRoom().then(() =>
+          dispatch.lights.getLights()
+        );
       disableScreenSaver();
       fullyApi("setScreenBrightness", 64);
     }
@@ -85,6 +89,7 @@ function App({
       fullyApi("setScreenBrightness", 0);
       clearInterval(dataPollingInterval);
     }
+    setSlideId(1);
   };
 
   if (!isDataLoaded) {
@@ -138,7 +143,8 @@ const mapState = state => ({
   isDataLoaded: isDataLoaded(state),
   isScreenSaverOn: state.app.isScreenSaverOn,
   isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
-  selectedRoomId: state.app.selectedRoomId
+  selectedRoomId: state.app.selectedRoomId,
+  hasScenes: hasScenes(state)
 });
 
 const mapDispatch = ({ app, rooms }) => ({
