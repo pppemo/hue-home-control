@@ -8,6 +8,7 @@ import RoomSwitches from "./containers/RoomSwitches";
 import SceneSwitches from "./containers/SceneSwitches";
 import { dispatch } from "./store";
 import Spinner from "./components/Spinner";
+import CarouselIndicator from "./components/CarouselIndicator";
 import { slide as Menu } from "react-burger-menu";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import IdleMonitor from "react-simple-idle-monitor";
@@ -80,7 +81,6 @@ function App({
   };
 
   const onUserIdle = () => {
-    console.log('onIdle')
     if (!isAnyLightOnInSelectedRoom) {
       enableScreenSaver();
       fullyApi("setScreenBrightness", 0);
@@ -97,6 +97,8 @@ function App({
       </div>
     );
   }
+
+  const slides = buildSlides();
 
   return (
     <IdleMonitor
@@ -122,6 +124,11 @@ function App({
             <div className={styles.burgerMenuItem} />
           </Menu>
           <div className={styles.app}>
+            <CarouselIndicator
+              className={styles.carouselIndicator}
+              numberOfItems={slides.length}
+              currentItemIndex={slideId}
+            />
             <Carousel
               selectedItem={slideId}
               onChange={id => setSlideId(id)}
@@ -130,7 +137,7 @@ function App({
               showStatus={false}
               showIndicators={false}
             >
-              {buildSlides()}
+              {slides}
             </Carousel>
           </div>
         </>
