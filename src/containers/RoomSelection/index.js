@@ -9,7 +9,6 @@ import styles from "./RoomSelection.module.scss";
 const RoomSelection = ({ rooms, onRoomSelected }) => {
   const getRoomsObjects = () =>
     Object.entries(rooms).map(([key, obj]) => ({
-      key,
       id: key,
       name: obj.name
     }));

@@ -4,6 +4,7 @@ import { COOKIES } from "./../constants"
 export default {
   state: {
     selectedRoomId: Cookies.get(COOKIES.SELECTED_ROOM_ID),
+    defaultSceneId: Cookies.get(COOKIES.DEFAULT_SCENE_ID),
     isScreenSaverOn: false,
     selectedRoomSceneId: null
   },
@@ -19,6 +20,10 @@ export default {
     setSelectedRoomSceneId: (state, selectedRoomSceneId) => ({
       ...state,
       selectedRoomSceneId
+    }),
+    setDefaultSceneId: (state, defaultSceneId) => ({
+      ...state,
+      defaultSceneId
     }),
     resetSelectedRoomSceneId: (state) => ({
       ...state,

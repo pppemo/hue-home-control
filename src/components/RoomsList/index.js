@@ -3,7 +3,7 @@ import styles from "./RoomsList.module.scss";
 
 export default ({ rooms, onClick }) => {
   return rooms.map(room => (
-    <div onClick={() => onClick(room.id)} className={styles.item}>
+    <div key={room.id} onClick={() => onClick(room.id)} className={styles.item}>
       {room.name}
     </div>
   ));

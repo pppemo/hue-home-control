@@ -2,17 +2,19 @@ import React from "react";
 import { connect } from "react-redux";
 import { dispatch } from "./../../store";
 import Switch from "./../../components/Switch";
+import { COOKIES } from "./../../constants";
+import Cookies from "js-cookie";
 import styles from "./SceneSwitches.module.scss";
 
 const SceneSwitches = ({
   selectedRoomId,
   selectedRoomSceneId,
+  defaultSceneId,
   scenes,
   recallScene
 }) => {
   const scenesArray = Object.entries(scenes)
     .map(([key, props]) => ({
-      key,
       id: key,
       ...props
     }))
@@ -24,15 +26,22 @@ const SceneSwitches = ({
       dispatch.lights.getLights();
     });
 
+  const handleSwitchLongPress = sceneId => {
+    Cookies.set(COOKIES.DEFAULT_SCENE_ID, sceneId, { expires: 3650 });
+    dispatch.app.setDefaultSceneId(sceneId);
+  };
+
   return (
     <div className={styles.switchesContainer}>
       {scenesArray.map(scene => (
         <Switch
           isTurningOffDisabled
           key={scene.id}
+          isFavourite={scene.id === defaultSceneId}
           isOn={scene.id === selectedRoomSceneId}
           lightName={scene.name}
-          onClick={() => handleSwitchToggle(scene.id)}
+          onPress={() => handleSwitchToggle(scene.id)}
+          onLongPress={() => handleSwitchLongPress(scene.id)}
         />
       ))}
     </div>
@@ -42,6 +51,7 @@ const SceneSwitches = ({
 const mapState = state => ({
   scenes: state.scenes,
   selectedRoomId: state.app.selectedRoomId,
+  defaultSceneId: state.app.defaultSceneId,
   selectedRoomSceneId: state.app.selectedRoomSceneId
 });
 

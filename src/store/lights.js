@@ -29,13 +29,6 @@ export default {
       const { id, newState: state } = lightState;
       await Gateway.setLightState(id, state);
       dispatch.lights.setState({ id, state });
-    },
-    async turnOnDefaultLights() {
-      const DEFAULT_LIGHTS = [4];
-      DEFAULT_LIGHTS.forEach(id => {
-        Gateway.setLightState(id, { on: true });
-        dispatch.lights.setState({ id, state: { on: true } });
-      });
     }
   })
 };

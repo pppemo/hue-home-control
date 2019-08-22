@@ -1,4 +1,5 @@
 import Gateway from "./../gateway";
+import store from "./../store";
 
 export default {
   state: null,
@@ -29,6 +30,16 @@ export default {
       const { id, newState: state } = roomState;
       await Gateway.setGroupState(id, state);
       dispatch.rooms.setState({ id, state });
+    },
+    async turnOnDefaultSceneInSelectedRoom() {
+      const {
+        app: { defaultSceneId, selectedRoomId }
+      } = store.getState();
+      if (defaultSceneId) {
+        const state = { scene: defaultSceneId };
+        await Gateway.setGroupState(selectedRoomId, state);
+        dispatch.rooms.setState({ id: selectedRoomId, state });
+      }
     }
   })
 };

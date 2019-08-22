@@ -22,7 +22,7 @@ function App({
   enableScreenSaver,
   disableScreenSaver,
   isAnyLightOnInSelectedRoom,
-  turnOnDefaultLights,
+  turnOnDefaultSceneInSelectedRoom,
   selectedRoomId
 }) {
   const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
@@ -73,7 +73,7 @@ function App({
     if (isScreenSaverOn) {
       selectedRoomId &&
         type === "touchstart" &&
-        turnOnDefaultLights().then(() => dispatch.lights.getLights());
+        turnOnDefaultSceneInSelectedRoom().then(() => dispatch.lights.getLights());
       disableScreenSaver();
       fullyApi("setScreenBrightness", 128);
     }
@@ -141,10 +141,10 @@ const mapState = state => ({
   selectedRoomId: state.app.selectedRoomId
 });
 
-const mapDispatch = ({ app, lights }) => ({
+const mapDispatch = ({ app, rooms }) => ({
   enableScreenSaver: () => app.setIsScreenSaverOn(true),
   disableScreenSaver: () => app.setIsScreenSaverOn(false),
-  turnOnDefaultLights: lights.turnOnDefaultLights
+  turnOnDefaultSceneInSelectedRoom: rooms.turnOnDefaultSceneInSelectedRoom
 });
 
 export default connect(
