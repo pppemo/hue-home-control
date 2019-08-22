@@ -39,6 +39,7 @@ export default {
         const state = { scene: defaultSceneId };
         await Gateway.setGroupState(selectedRoomId, state);
         dispatch.rooms.setState({ id: selectedRoomId, state });
+        dispatch.app.setSelectedRoomSceneId(defaultSceneId);
       }
     }
   })

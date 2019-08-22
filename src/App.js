@@ -55,7 +55,7 @@ function App({
 
   const buildSlides = () => {
     const slides = [
-      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(1)} />
+      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(2)} />
     ];
 
     if (selectedRoomId) {
@@ -75,7 +75,7 @@ function App({
         type === "touchstart" &&
         turnOnDefaultSceneInSelectedRoom().then(() => dispatch.lights.getLights());
       disableScreenSaver();
-      fullyApi("setScreenBrightness", 128);
+      fullyApi("setScreenBrightness", 64);
     }
   };
 
