@@ -27,8 +27,13 @@ const SceneSwitches = ({
     });
 
   const handleSwitchLongPress = sceneId => {
-    Cookies.set(COOKIES.DEFAULT_SCENE_ID, sceneId, { expires: 3650 });
-    dispatch.app.setDefaultSceneId(sceneId);
+    if (sceneId === defaultSceneId) {
+      Cookies.remove(COOKIES.DEFAULT_SCENE_ID);
+      dispatch.app.setDefaultSceneId(null);
+    } else {
+      Cookies.set(COOKIES.DEFAULT_SCENE_ID, sceneId, { expires: 3650 });
+      dispatch.app.setDefaultSceneId(sceneId);
+    }
   };
 
   return (
