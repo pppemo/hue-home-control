@@ -20,12 +20,16 @@ const RoomSelection = ({ rooms, onRoomSelected }) => {
       .then(() => onRoomSelected && onRoomSelected(roomId));
   }
 
+  const setDefaultPageType = pageType => Cookies.set(COOKIES.DEFAULT_PAGE_TYPE, pageType)
+
   return (
     <div className={styles.container}>
       <p className={styles.title}>Which room?</p>
       <div className={styles.items}>
         <RoomsList rooms={getRoomsObjects()} onClick={handleRoomSelection} />
       </div>
+      <button onClick={() => setDefaultPageType("scenes")}>Scenes by default</button>
+      <button onClick={() => setDefaultPageType("lights")}>Lights by default</button>
     </div>
   );
 };

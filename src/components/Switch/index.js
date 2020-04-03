@@ -24,7 +24,7 @@ const Switch = ({
     <LongPress
       time={1000}
       onLongPress={onLongPress}
-      onPress={!isDisabled ? handleToggle : undefined}
+      onPress={(!isDisabled ? handleToggle : undefined)}
     >
       <div className={styles.container}>
         <div

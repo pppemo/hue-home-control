@@ -16,6 +16,8 @@ import { Carousel } from "react-responsive-carousel";
 import { fullyApi } from "./helpers/fully";
 import Bridge from "./helpers/bridge"
 import { nanoid } from "nanoid"
+import Cookies from "js-cookie"
+import { COOKIES } from "./constants"
 import styles from "./App.module.scss";
 
 const SCREEN_SAVER_WAIT_TIME = 5000;
@@ -114,7 +116,7 @@ function App({
   return (
     <IdleMonitor
       timeout={BACK_TO_MAIN_SCREEN_TIME}
-      onIdle={() => setSlideId(1)}
+      onIdle={() => Cookies.get(COOKIES.DEFAULT_PAGE_TYPE) === "lights" ? setSlideId(2) : setSlideId(1)}
     >
       <IdleMonitor
         timeout={idleMonitorTimeout}
