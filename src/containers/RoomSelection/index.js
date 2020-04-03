@@ -25,11 +25,11 @@ const RoomSelection = ({ rooms, onRoomSelected }) => {
   return (
     <div className={styles.container}>
       <p className={styles.title}>Which room?</p>
+      <button onClick={() => setDefaultPageType("scenes")}>Scenes by default</button>
+      <button onClick={() => setDefaultPageType("lights")}>Lights by default</button>
       <div className={styles.items}>
         <RoomsList rooms={getRoomsObjects()} onClick={handleRoomSelection} />
       </div>
-      <button onClick={() => setDefaultPageType("scenes")}>Scenes by default</button>
-      <button onClick={() => setDefaultPageType("lights")}>Lights by default</button>
     </div>
   );
 };

@@ -54,7 +54,7 @@ function App({
   }, []);
 
   const createDataPollingInterval = () => {
-    const interval = setInterval(() => dispatch.lights.getLights(), 5000);
+    const interval = setInterval(() => dispatch.lights.getLights(), 20000);
     setDataPollingInterval(interval);
   };
 
