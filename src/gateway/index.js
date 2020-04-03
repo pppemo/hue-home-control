@@ -1,12 +1,23 @@
 import axios from "axios";
+import Cookies from "js-cookie"
+import { COOKIES } from "./../constants"
 
-const {
-  REACT_APP_HUE_BRIDGE_ENDPOINT,
-  REACT_APP_HUE_BRIDGE_USERNAME
-} = process.env;
+const HUE_BRIDGE_IP = Cookies.get(COOKIES.HUE_BRIDGE_IP)
+const HUE_BRIDGE_USER = Cookies.get(COOKIES.HUE_BRIDGE_USER)
+
+export const isBridgeDiscovered = () => {
+  const HUE_BRIDGE_IP = Cookies.get(COOKIES.HUE_BRIDGE_IP)
+  const HUE_BRIDGE_USER = Cookies.get(COOKIES.HUE_BRIDGE_USER)
+  return !!HUE_BRIDGE_IP && !!HUE_BRIDGE_USER
+}
 
 const hueClient = axios.create({
-  baseURL: `${REACT_APP_HUE_BRIDGE_ENDPOINT}/api/${REACT_APP_HUE_BRIDGE_USERNAME}`,
+  baseURL: `https://discovery.meethue.com`,
+  timeout: 60000
+});
+
+const bridgeClient = axios.create({
+  baseURL: `http://${HUE_BRIDGE_IP}/api/${HUE_BRIDGE_USER}`,
   timeout: 30000
 });
 
@@ -14,16 +25,25 @@ const errorHandler = response => {
   //TODO Implement error handling
 }
 
-hueClient.interceptors.response.use(
+bridgeClient.interceptors.response.use(
   //TODO Implement Hue error handling with 200 status
   response => response.data,
   errorHandler
 )
 
 export default {
-  getLightsInfo: () => hueClient.get("/lights"),
-  getRooms: () => hueClient.get("/groups"),
-  getScenes: () => hueClient.get("/scenes"),
-  setLightState: (id, state) => hueClient.put(`/lights/${id}/state`, state),
-  setGroupState: (id, state) => hueClient.put(`/groups/${id}/action`, state)
+  findBridgeIp: () => hueClient.get("/"),
+  createNewUser: (bridgeIp, clientName) => axios({
+    url: '/api',
+    baseURL: `http://${bridgeIp}`,
+    method: 'post',
+    data: {
+      devicetype: `hue-home-control#${clientName}`
+    }
+  }),
+  getLightsInfo: () => bridgeClient.get("/lights"),
+  getRooms: () => bridgeClient.get("/groups"),
+  getScenes: () => bridgeClient.get("/scenes"),
+  setLightState: (id, state) => bridgeClient.put(`/lights/${id}/state`, state),
+  setGroupState: (id, state) => bridgeClient.put(`/groups/${id}/action`, state)
 };

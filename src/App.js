@@ -14,6 +14,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import IdleMonitor from "react-simple-idle-monitor";
 import { Carousel } from "react-responsive-carousel";
 import { fullyApi } from "./helpers/fully";
+import Bridge from "./helpers/bridge"
+import { nanoid } from "nanoid"
 import styles from "./App.module.scss";
 
 const SCREEN_SAVER_WAIT_TIME = 5000;
@@ -36,15 +38,17 @@ function App({
   const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
   useEffect(() => {
-    dispatch.rooms.getRooms();
-    dispatch.lights.getLights();
-    dispatch.scenes.getScenes();
-    createDataPollingInterval();
-    fullyApi(
-      "bind",
-      "onMotion",
-      'document.dispatchEvent(new KeyboardEvent("keydown"));'
-    );
+    if (Bridge.isBridgeDiscovered()) {
+      dispatch.rooms.getRooms();
+      dispatch.lights.getLights();
+      dispatch.scenes.getScenes();
+      createDataPollingInterval();
+      fullyApi(
+        "bind",
+        "onMotion",
+        'document.dispatchEvent(new KeyboardEvent("keydown"));'
+      );
+    }
   }, []);
 
   const createDataPollingInterval = () => {
@@ -87,6 +91,13 @@ function App({
       clearInterval(dataPollingInterval);
     }
   };
+
+  if (!Bridge.isBridgeDiscovered()) {
+    return (<div>
+      No bridge is detected. Press a button on a bridge and then click "Continue".
+      <button onClick={() => Bridge.createBridgeUser(nanoid())}>Continue</button>
+    </div>)
+  }
 
   if (!isDataLoaded) {
     return (
