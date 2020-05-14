@@ -15,13 +15,13 @@ export default {
           ...groupObject,
           state: {
             ...state[id].state,
-            ...newState
-          }
-        }
+            ...newState,
+          },
+        },
       };
-    }
+    },
   },
-  effects: dispatch => ({
+  effects: (dispatch) => ({
     async getRooms() {
       const rooms = await Gateway.getRooms();
       dispatch.rooms.setRooms(rooms);
@@ -29,26 +29,29 @@ export default {
     async setRoomState(roomState) {
       const { id, newState: state } = roomState;
       await Gateway.setGroupState(id, state);
+      await dispatch.sensors.handleLightActionTriggered();
       dispatch.rooms.setState({ id, state });
     },
     async turnOffLightsInSelectedRoom() {
       const {
-        app: { selectedRoomId }
+        app: { selectedRoomId },
       } = store.getState();
-        await Gateway.setGroupState(selectedRoomId, { on: false });
-        dispatch.rooms.setState({ id: selectedRoomId, state: { on: false } });
-        dispatch.app.setSelectedRoomSceneId(null);
+      await Gateway.setGroupState(selectedRoomId, { on: false });
+      await dispatch.sensors.handleLightActionTriggered();
+      dispatch.rooms.setState({ id: selectedRoomId, state: { on: false } });
+      dispatch.app.setSelectedRoomSceneId(null);
     },
     async turnOnDefaultSceneInSelectedRoom() {
       const {
-        app: { defaultSceneId, selectedRoomId }
+        app: { defaultSceneId, selectedRoomId },
       } = store.getState();
       if (defaultSceneId) {
         const state = { scene: defaultSceneId };
         await Gateway.setGroupState(selectedRoomId, state);
+        await dispatch.sensors.handleLightActionTriggered();
         dispatch.rooms.setState({ id: selectedRoomId, state });
         dispatch.app.setSelectedRoomSceneId(defaultSceneId);
       }
-    }
-  })
+    },
+  }),
 };

@@ -8,10 +8,14 @@ import { COOKIES } from "../../constants";
 import Cookies from "js-cookie";
 import styles from "./Config.module.scss";
 
-const Config = () => {
+const Config = ({ setConfigParamInStorage }) => {
   const [defaultReturnToPage, setDefaultReturnToPage] = useState(
     Cookies.get(COOKIES.DEFAULT_PAGE_TYPE) || "scenes"
   );
+  const [
+    configActionTriggerSensorName,
+    setConfigActionTriggerSensorName,
+  ] = useState(Cookies.get(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME));
   const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] = useState(
     false
   );
@@ -23,6 +27,13 @@ const Config = () => {
 
   const handleShowAdvancedOptionsButton = () =>
     setShouldShowAdvancedOptions(!shouldShowAdvancedOptions);
+
+  const handleConfigActionTriggerSensorNameChange = (event) => {
+    const { value } = event.target;
+    setConfigActionTriggerSensorName(value);
+    Cookies.set(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME, value);
+    setConfigParamInStorage("actionTriggerSensorName", value);
+  };
 
   return (
     <div className={styles.container}>
@@ -55,7 +66,12 @@ const Config = () => {
             <div className={styles.configLabel}>
               When any action performed, trigger a flag in a virtual sensor
             </div>
-            <TextField label="Sensor name" variant="filled" />
+            <TextField
+              label="Sensor name"
+              variant="filled"
+              value={configActionTriggerSensorName}
+              onChange={handleConfigActionTriggerSensorNameChange}
+            />
           </>
         )}
       </Box>
@@ -63,8 +79,10 @@ const Config = () => {
   );
 };
 
-const mapState = (state) => ({
-  rooms: state.rooms,
+const mapState = (state) => ({});
+
+const mapDispatch = ({ app }) => ({
+  setConfigParamInStorage: (name, value) => app.setConfigParam({ name, value }),
 });
 
-export default connect(mapState)(Config);
+export default connect(mapState, mapDispatch)(Config);

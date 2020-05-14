@@ -1,11 +1,12 @@
 import { init } from "@rematch/core";
-import createLoadingPlugin from '@rematch/loading';
+import createLoadingPlugin from "@rematch/loading";
 import rooms from "./rooms";
 import lights from "./lights";
 import scenes from "./scenes";
+import sensors from "./sensors";
 import app from "./app";
 
-const loadingPlugin = createLoadingPlugin({})
+const loadingPlugin = createLoadingPlugin({});
 
 const store = init({
   plugins: [loadingPlugin],
@@ -13,8 +14,9 @@ const store = init({
     rooms,
     lights,
     scenes,
-    app
-  }
+    sensors,
+    app,
+  },
 });
 
 export default store;

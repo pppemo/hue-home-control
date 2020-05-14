@@ -51,6 +51,7 @@ function App({
       dispatch.rooms.getRooms();
       dispatch.lights.getLights();
       dispatch.scenes.getScenes();
+      dispatch.sensors.getSensors();
       createDataPollingInterval();
       fullyApi(
         "bind",

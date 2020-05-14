@@ -14,13 +14,13 @@ export default {
           ...lightObject,
           state: {
             ...state[id].state,
-            ...newState
-          }
-        }
+            ...newState,
+          },
+        },
       };
-    }
+    },
   },
-  effects: dispatch => ({
+  effects: (dispatch) => ({
     async getLights() {
       const rooms = await Gateway.getLightsInfo();
       dispatch.lights.setLights(rooms);
@@ -28,7 +28,8 @@ export default {
     async setLightState(lightState) {
       const { id, newState: state } = lightState;
       await Gateway.setLightState(id, state);
+      await dispatch.sensors.handleLightActionTriggered();
       dispatch.lights.setState({ id, state });
-    }
-  })
+    },
+  }),
 };

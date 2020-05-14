@@ -1,33 +1,45 @@
-import Cookies from "js-cookie"
-import { COOKIES } from "./../constants"
+import Cookies from "js-cookie";
+import { COOKIES } from "./../constants";
 
 export default {
   state: {
     selectedRoomId: Cookies.get(COOKIES.SELECTED_ROOM_ID),
     defaultSceneId: Cookies.get(COOKIES.DEFAULT_SCENE_ID),
     isScreenSaverOn: false,
-    selectedRoomSceneId: null
+    selectedRoomSceneId: null,
+    config: {
+      actionTriggerSensorName: Cookies.get(
+        COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME
+      ),
+    },
   },
   reducers: {
     setIsScreenSaverOn: (state, isScreenSaverOn) => ({
       ...state,
-      isScreenSaverOn
+      isScreenSaverOn,
     }),
     setSelectedRoomId: (state, selectedRoomId) => ({
       ...state,
-      selectedRoomId
+      selectedRoomId,
     }),
     setSelectedRoomSceneId: (state, selectedRoomSceneId) => ({
       ...state,
-      selectedRoomSceneId
+      selectedRoomSceneId,
     }),
     setDefaultSceneId: (state, defaultSceneId) => ({
       ...state,
-      defaultSceneId
+      defaultSceneId,
     }),
     resetSelectedRoomSceneId: (state) => ({
       ...state,
-      selectedRoomSceneId: null
-    })
-  }
+      selectedRoomSceneId: null,
+    }),
+    setConfigParam: (state, { name, value }) => ({
+      ...state,
+      config: {
+        ...state.config,
+        [name]: value,
+      },
+    }),
+  },
 };
