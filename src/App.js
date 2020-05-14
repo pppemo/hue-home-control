@@ -21,9 +21,8 @@ import Cookies from "js-cookie";
 import { COOKIES } from "./constants";
 import styles from "./App.module.scss";
 
-const SCREEN_SAVER_WAIT_TIME = 5000000000;
+const SCREEN_SAVER_WAIT_TIME = 5000;
 const BACK_TO_MAIN_SCREEN_TIME = 3500;
-const CONFIG_SCREEN_ID = 0;
 const ROOM_SELECTION_SCREEN_ID = 1;
 const SCENES_SCREEN_ID = 2;
 const LIGHTS_SCREEN_ID = 3;
