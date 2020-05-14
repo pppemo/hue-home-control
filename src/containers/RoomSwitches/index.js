@@ -9,11 +9,12 @@ const RoomSwitches = ({
   rooms,
   lights,
   setLightOn,
-  setLightOff
+  setLightOff,
+  turnOffLightsInSelectedRoom,
 }) => {
-  const roomLights = rooms[selectedRoomId].lights.map(id => ({
+  const roomLights = rooms[selectedRoomId].lights.map((id) => ({
     id,
-    ...lights[id]
+    ...lights[id],
   }));
 
   const handleSwitchToggle = (lightId, state) => {
@@ -21,33 +22,36 @@ const RoomSwitches = ({
     state ? setLightOn(lightId) : setLightOff(lightId);
   };
 
+  const handleOffButton = () => {
+    turnOffLightsInSelectedRoom().then(() => dispatch.lights.getLights());
+  };
+
   return (
     <div className={styles.switchesContainer}>
-      {roomLights.map(light => (
+      {roomLights.map((light) => (
         <Switch
           key={light.id}
           isOn={light.state.on}
           lightName={light.name}
           isDisabled={!light.state.reachable}
-          onPress={state => handleSwitchToggle(light.id, state)}
+          onPress={(state) => handleSwitchToggle(light.id, state)}
         />
       ))}
+      <Switch lightName="OFF" isStateless onPress={handleOffButton} />
     </div>
   );
 };
 
-const mapState = state => ({
+const mapState = (state) => ({
   rooms: state.rooms,
   lights: state.lights,
-  selectedRoomId: state.app.selectedRoomId
+  selectedRoomId: state.app.selectedRoomId,
 });
 
-const mapDispatch = ({ lights }) => ({
-  setLightOn: id => lights.setLightState({ id, newState: { on: true } }),
-  setLightOff: id => lights.setLightState({ id, newState: { on: false } })
+const mapDispatch = ({ lights, rooms }) => ({
+  setLightOn: (id) => lights.setLightState({ id, newState: { on: true } }),
+  setLightOff: (id) => lights.setLightState({ id, newState: { on: false } }),
+  turnOffLightsInSelectedRoom: () => rooms.turnOffLightsInSelectedRoom(),
 });
 
-export default connect(
-  mapState,
-  mapDispatch
-)(RoomSwitches);
+export default connect(mapState, mapDispatch)(RoomSwitches);

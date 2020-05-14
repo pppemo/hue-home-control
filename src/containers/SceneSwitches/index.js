@@ -14,14 +14,13 @@ const SceneSwitches = ({
   scenes,
   recallScene,
   turnOffLightsInSelectedRoom,
-  isAnyLightOnInSelectedRoom
 }) => {
   const scenesArray = Object.entries(scenes)
     .map(([key, props]) => ({
       id: key,
-      ...props
+      ...props,
     }))
-    .filter(scene => scene.group === selectedRoomId && !scene.recycle);
+    .filter((scene) => scene.group === selectedRoomId && !scene.recycle);
 
   const handleSwitchToggle = (isOn, sceneId) => {
     if (isOn) {
@@ -35,7 +34,7 @@ const SceneSwitches = ({
     }
   };
 
-  const handleSwitchLongPress = sceneId => {
+  const handleSwitchLongPress = (sceneId) => {
     if (sceneId === defaultSceneId) {
       Cookies.remove(COOKIES.DEFAULT_SCENE_ID);
       dispatch.app.setDefaultSceneId(null);
@@ -47,40 +46,37 @@ const SceneSwitches = ({
 
   return (
     <div className={styles.switchesContainer}>
-      {scenesArray.map(scene => (
+      {scenesArray.map((scene) => (
         <Switch
           key={scene.id}
           isFavourite={scene.id === defaultSceneId}
           isOn={scene.id === selectedRoomSceneId}
           lightName={scene.name}
-          onPress={isOn => handleSwitchToggle(isOn, scene.id)}
+          onPress={(isOn) => handleSwitchToggle(isOn, scene.id)}
           onLongPress={() => handleSwitchLongPress(scene.id)}
         />
       ))}
       <Switch
-        isOn={isAnyLightOnInSelectedRoom && selectedRoomSceneId === null}
-        lightName="Custom"
+        lightName="OFF"
+        isStateless
         onPress={() => handleSwitchToggle(false)}
       />
     </div>
   );
 };
 
-const mapState = state => ({
+const mapState = (state) => ({
   scenes: state.scenes,
   selectedRoomId: state.app.selectedRoomId,
   defaultSceneId: state.app.defaultSceneId,
   selectedRoomSceneId: state.app.selectedRoomSceneId,
-  isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state)
+  isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
 });
 
 const mapDispatch = ({ rooms }) => ({
   recallScene: (roomId, sceneId) =>
     rooms.setRoomState({ id: roomId, newState: { scene: sceneId } }),
-  turnOffLightsInSelectedRoom: () => rooms.turnOffLightsInSelectedRoom()
+  turnOffLightsInSelectedRoom: () => rooms.turnOffLightsInSelectedRoom(),
 });
 
-export default connect(
-  mapState,
-  mapDispatch
-)(SceneSwitches);
+export default connect(mapState, mapDispatch)(SceneSwitches);

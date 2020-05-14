@@ -9,8 +9,9 @@ const Switch = ({
   isOn: isOnProp,
   isDisabled,
   isFavourite,
+  isStateless,
   onPress,
-  onLongPress
+  onLongPress,
 }) => {
   const [isOn, setIsOn] = useState(isOnProp);
 
@@ -23,14 +24,15 @@ const Switch = ({
   return (
     <LongPress
       time={1000}
-      onLongPress={onLongPress}
-      onPress={(!isDisabled ? handleToggle : undefined)}
+      onLongPress={!isStateless && onLongPress}
+      onPress={!isDisabled ? handleToggle : undefined}
     >
       <div className={styles.container}>
         <div
           className={cx(styles.switch, {
-            [styles.isActive]: !isDisabled && isOn,
-            [styles.isDisabled]: isDisabled
+            [styles.isActive]: !isDisabled && !isStateless && isOn,
+            [styles.isDisabled]: !isStateless && isDisabled,
+            [styles.isStateless]: isStateless,
           })}
         >
           <div className={styles.label}>
@@ -52,6 +54,7 @@ Switch.propTypes = {
   isOn: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool,
   isFavourite: PropTypes.bool,
+  isStateless: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
   onLongPress: PropTypes.func,
 };
@@ -59,7 +62,8 @@ Switch.propTypes = {
 Switch.defaultProps = {
   isDisabled: false,
   onLongPress: undefined,
-  isFavourite: false
+  isFavourite: false,
+  isStateless: false,
 };
 
 export default Switch;
