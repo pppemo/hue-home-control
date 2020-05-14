@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { isDataLoaded } from "./store/selectors/global";
 import { isAnyLightOnInSelectedRoom } from "./store/selectors/lights";
 import { hasScenes } from "./store/selectors/scenes";
+import Config from "./containers/Config";
 import RoomSelection from "./containers/RoomSelection";
 import RoomSwitches from "./containers/RoomSwitches";
 import SceneSwitches from "./containers/SceneSwitches";
@@ -14,14 +15,18 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import IdleMonitor from "react-simple-idle-monitor";
 import { Carousel } from "react-responsive-carousel";
 import { fullyApi } from "./helpers/fully";
-import Bridge from "./helpers/bridge"
-import { nanoid } from "nanoid"
-import Cookies from "js-cookie"
-import { COOKIES } from "./constants"
+import Bridge from "./helpers/bridge";
+import { nanoid } from "nanoid";
+import Cookies from "js-cookie";
+import { COOKIES } from "./constants";
 import styles from "./App.module.scss";
 
-const SCREEN_SAVER_WAIT_TIME = 5000;
+const SCREEN_SAVER_WAIT_TIME = 5000000000;
 const BACK_TO_MAIN_SCREEN_TIME = 3500;
+const CONFIG_SCREEN_ID = 0;
+const ROOM_SELECTION_SCREEN_ID = 1;
+const SCENES_SCREEN_ID = 2;
+const LIGHTS_SCREEN_ID = 3;
 
 function App({
   isDataLoaded,
@@ -31,12 +36,14 @@ function App({
   isAnyLightOnInSelectedRoom,
   turnOnDefaultSceneInSelectedRoom,
   selectedRoomId,
-  hasScenes
+  hasScenes,
 }) {
   const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
     SCREEN_SAVER_WAIT_TIME
   );
-  const [slideId, setSlideId] = useState(selectedRoomId ? 1 : 0);
+  const [slideId, setSlideId] = useState(
+    selectedRoomId ? SCENES_SCREEN_ID : ROOM_SELECTION_SCREEN_ID
+  );
   const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
   useEffect(() => {
@@ -54,13 +61,17 @@ function App({
   }, []);
 
   const createDataPollingInterval = () => {
-    const interval = setInterval(() => dispatch.lights.getLights(), 20000);
+    const interval = setInterval(() => dispatch.lights.getLights(), 10000);
     setDataPollingInterval(interval);
   };
 
   const buildSlides = () => {
     const slides = [
-      <RoomSelection key="RoomSelection" onRoomSelected={() => setSlideId(1)} />
+      <Config key="Config" />,
+      <RoomSelection
+        key="RoomSelection"
+        onRoomSelected={() => setSlideId(SCENES_SCREEN_ID)}
+      />,
     ];
 
     if (selectedRoomId) {
@@ -70,9 +81,9 @@ function App({
     return slides;
   };
 
-  const onUserActive = event => {
+  const onUserActive = (event) => {
     const {
-      event: { type }
+      event: { type },
     } = event;
     createDataPollingInterval();
     if (isScreenSaverOn) {
@@ -95,10 +106,15 @@ function App({
   };
 
   if (!Bridge.isBridgeDiscovered()) {
-    return (<div>
-      No bridge is detected. Press a button on a bridge and then click "Continue".
-      <button onClick={() => Bridge.createBridgeUser(nanoid())}>Continue</button>
-    </div>)
+    return (
+      <div>
+        No bridge is detected. Press a button on a bridge and then click
+        "Continue".
+        <button onClick={() => Bridge.createBridgeUser(nanoid())}>
+          Continue
+        </button>
+      </div>
+    );
   }
 
   if (!isDataLoaded) {
@@ -116,7 +132,11 @@ function App({
   return (
     <IdleMonitor
       timeout={BACK_TO_MAIN_SCREEN_TIME}
-      onIdle={() => Cookies.get(COOKIES.DEFAULT_PAGE_TYPE) === "lights" ? setSlideId(2) : setSlideId(1)}
+      onIdle={() =>
+        Cookies.get(COOKIES.DEFAULT_PAGE_TYPE) === "lights"
+          ? setSlideId(LIGHTS_SCREEN_ID)
+          : setSlideId(SCENES_SCREEN_ID)
+      }
     >
       <IdleMonitor
         timeout={idleMonitorTimeout}
@@ -144,7 +164,7 @@ function App({
             />
             <Carousel
               selectedItem={slideId}
-              onChange={id => setSlideId(id)}
+              onChange={(id) => setSlideId(id)}
               showArrows={false}
               showThumbs={false}
               showStatus={false}
@@ -159,21 +179,18 @@ function App({
   );
 }
 
-const mapState = state => ({
+const mapState = (state) => ({
   isDataLoaded: isDataLoaded(state),
   isScreenSaverOn: state.app.isScreenSaverOn,
   isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
   selectedRoomId: state.app.selectedRoomId,
-  hasScenes: hasScenes(state)
+  hasScenes: hasScenes(state),
 });
 
 const mapDispatch = ({ app, rooms }) => ({
   enableScreenSaver: () => app.setIsScreenSaverOn(true),
   disableScreenSaver: () => app.setIsScreenSaverOn(false),
-  turnOnDefaultSceneInSelectedRoom: rooms.turnOnDefaultSceneInSelectedRoom
+  turnOnDefaultSceneInSelectedRoom: rooms.turnOnDefaultSceneInSelectedRoom,
 });
 
-export default connect(
-  mapState,
-  mapDispatch
-)(App);
+export default connect(mapState, mapDispatch)(App);

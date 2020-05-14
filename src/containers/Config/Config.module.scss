@@ -1,0 +1,19 @@
+.container {
+  text-align: left;
+  width: 70%;
+  margin: 0 auto;
+
+  p.title {
+    font-size: 5rem;
+  }
+
+  .configLabel {
+    font-size: 1.75rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .advancedOptionsContainer {
+    margin-top: 2rem;
+  }
+}
