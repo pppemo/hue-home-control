@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { dispatch } from "../../store";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import { Button, Box } from "@material-ui/core";
-import { ToggleButtonGroup, TextField } from "./../../components/UI";
+import { ToggleButtonGroup, TextField, Switch } from "./../../components/UI";
 import { COOKIES } from "../../constants";
 import Cookies from "js-cookie";
 import styles from "./Config.module.scss";
@@ -19,10 +18,15 @@ const Config = ({ setConfigParamInStorage }) => {
   const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] = useState(
     false
   );
+  const [soundsOn, setSoundsOn] = useState(
+    Cookies.get(COOKIES.CONFIG_SOUNDS_ON) === "false" ? false : true
+  );
 
   const setDefaultPageType = (_, pageType) => {
-    Cookies.set(COOKIES.DEFAULT_PAGE_TYPE, pageType);
-    setDefaultReturnToPage(pageType);
+    if (pageType) {
+      Cookies.set(COOKIES.DEFAULT_PAGE_TYPE, pageType);
+      setDefaultReturnToPage(pageType);
+    }
   };
 
   const handleShowAdvancedOptionsButton = () =>
@@ -35,9 +39,15 @@ const Config = ({ setConfigParamInStorage }) => {
     setConfigParamInStorage("actionTriggerSensorName", value);
   };
 
+  const handleSoundsOnSwitch = (_, soundsOn) => {
+    setSoundsOn(soundsOn);
+    Cookies.set(COOKIES.CONFIG_SOUNDS_ON, soundsOn);
+    setConfigParamInStorage("isSoundOn", soundsOn);
+  };
+
   return (
     <div className={styles.container}>
-      <p className={styles.title}>Configuration</p>
+      <p className={styles.title}>Settings</p>
 
       <div className={styles.configLabel}>Default "return to" page</div>
       <ToggleButtonGroup
@@ -53,6 +63,13 @@ const Config = ({ setConfigParamInStorage }) => {
           Scenes
         </ToggleButton>
       </ToggleButtonGroup>
+
+      <div className={styles.configLabel}>Click sounds</div>
+      <Switch
+        checked={soundsOn}
+        onChange={handleSoundsOnSwitch}
+        color="primary"
+      />
 
       <Box className={styles.advancedOptionsContainer}>
         <Button variant="contained" onClick={handleShowAdvancedOptionsButton}>

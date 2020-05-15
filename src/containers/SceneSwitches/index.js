@@ -13,6 +13,7 @@ const SceneSwitches = ({
   defaultSceneId,
   scenes,
   recallScene,
+  config,
   turnOffLightsInSelectedRoom,
 }) => {
   const scenesArray = Object.entries(scenes)
@@ -54,12 +55,14 @@ const SceneSwitches = ({
           lightName={scene.name}
           onPress={(isOn) => handleSwitchToggle(isOn, scene.id)}
           onLongPress={() => handleSwitchLongPress(scene.id)}
+          isSoundOn={config.isSoundOn}
         />
       ))}
       <Switch
         lightName="OFF"
         isStateless
         onPress={() => handleSwitchToggle(false)}
+        isSoundOn={config.isSoundOn}
       />
     </div>
   );
@@ -69,6 +72,7 @@ const mapState = (state) => ({
   scenes: state.scenes,
   selectedRoomId: state.app.selectedRoomId,
   defaultSceneId: state.app.defaultSceneId,
+  config: state.app.config,
   selectedRoomSceneId: state.app.selectedRoomSceneId,
   isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
 });

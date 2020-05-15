@@ -12,6 +12,7 @@ const Switch = ({
   isDisabled,
   isFavourite,
   isStateless,
+  isSoundOn,
   onPress,
   onLongPress,
 }) => {
@@ -21,7 +22,7 @@ const Switch = ({
   );
 
   const handleToggle = () => {
-    setIsConfirmationSoundPlaying(true);
+    isSoundOn && setIsConfirmationSoundPlaying(true);
     onPress(!isOn);
   };
 
@@ -74,6 +75,7 @@ Switch.propTypes = {
   isDisabled: PropTypes.bool,
   isFavourite: PropTypes.bool,
   isStateless: PropTypes.bool,
+  isSoundOn: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
   onLongPress: PropTypes.func,
 };
@@ -83,6 +85,7 @@ Switch.defaultProps = {
   onLongPress: undefined,
   isFavourite: false,
   isStateless: false,
+  isSoundOn: false,
 };
 
 export default Switch;

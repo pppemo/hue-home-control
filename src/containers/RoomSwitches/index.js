@@ -10,6 +10,7 @@ const RoomSwitches = ({
   lights,
   setLightOn,
   setLightOff,
+  config,
   turnOffLightsInSelectedRoom,
 }) => {
   const roomLights = rooms[selectedRoomId].lights.map((id) => ({
@@ -35,9 +36,15 @@ const RoomSwitches = ({
           lightName={light.name}
           isDisabled={!light.state.reachable}
           onPress={(state) => handleSwitchToggle(light.id, state)}
+          isSoundOn={config.isSoundOn}
         />
       ))}
-      <Switch lightName="OFF" isStateless onPress={handleOffButton} />
+      <Switch
+        lightName="OFF"
+        isStateless
+        onPress={handleOffButton}
+        isSoundOn={config.isSoundOn}
+      />
     </div>
   );
 };
@@ -45,6 +52,7 @@ const RoomSwitches = ({
 const mapState = (state) => ({
   rooms: state.rooms,
   lights: state.lights,
+  config: state.app.config,
   selectedRoomId: state.app.selectedRoomId,
 });
 

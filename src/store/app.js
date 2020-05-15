@@ -11,6 +11,8 @@ export default {
       actionTriggerSensorName: Cookies.get(
         COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME
       ),
+      isSoundOn:
+        Cookies.get(COOKIES.CONFIG_SOUNDS_ON) === "true" ? true : false,
     },
   },
   reducers: {
