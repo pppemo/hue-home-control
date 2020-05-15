@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import LongPress from "react-long";
+import { ButtonBase } from "@material-ui/core";
 import cx from "classnames";
 import styles from "./Switch.module.scss";
 
@@ -28,7 +29,7 @@ const Switch = ({
       onPress={!isDisabled ? handleToggle : undefined}
     >
       <div className={styles.container}>
-        <div
+        <ButtonBase
           className={cx(styles.switch, {
             [styles.isActive]: !isDisabled && !isStateless && isOn,
             [styles.isDisabled]: !isStateless && isDisabled,
@@ -43,7 +44,7 @@ const Switch = ({
             )}
             {lightName}
           </div>
-        </div>
+        </ButtonBase>
       </div>
     </LongPress>
   );
