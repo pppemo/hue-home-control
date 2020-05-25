@@ -169,6 +169,7 @@ function App({
               showThumbs={false}
               showStatus={false}
               showIndicators={false}
+              swipeScrollTolerance={150}
             >
               {slides}
             </Carousel>
