@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { dispatch } from "./../../store";
 import Switch from "./../../components/Switch";
+import { PowerSettingsNew } from "@material-ui/icons";
 import styles from "./RoomSwitches.module.scss";
 
 const RoomSwitches = ({
@@ -40,7 +41,7 @@ const RoomSwitches = ({
         />
       ))}
       <Switch
-        lightName="OFF"
+        lightName={<PowerSettingsNew style={{ fontSize: 50 }} />}
         isStateless
         onPress={handleOffButton}
         isSoundOn={config.isSoundOn}

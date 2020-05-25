@@ -5,6 +5,7 @@ import { isAnyLightOnInSelectedRoom } from "./../../store/selectors/lights";
 import Switch from "./../../components/Switch";
 import { COOKIES } from "./../../constants";
 import Cookies from "js-cookie";
+import { PowerSettingsNew } from "@material-ui/icons";
 import styles from "./SceneSwitches.module.scss";
 
 const SceneSwitches = ({
@@ -59,7 +60,7 @@ const SceneSwitches = ({
         />
       ))}
       <Switch
-        lightName="OFF"
+        lightName={<PowerSettingsNew style={{ fontSize: 50 }} />}
         isStateless
         onPress={() => handleSwitchToggle(false)}
         isSoundOn={config.isSoundOn}

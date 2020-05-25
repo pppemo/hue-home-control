@@ -70,7 +70,8 @@ const Switch = ({
 };
 
 Switch.propTypes = {
-  lightName: PropTypes.string.isRequired,
+  lightName: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
+    .isRequired,
   isOn: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool,
   isFavourite: PropTypes.bool,
