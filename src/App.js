@@ -88,6 +88,7 @@ function App({
         );
       disableScreenSaver();
       fullyApi("setScreenBrightness", 64);
+      dispatch.sensors.handleLightActionTriggered();
     }
   };
 
