@@ -18,4 +18,18 @@
   .advancedOptionsContainer {
     margin-top: 2rem;
   }
+
+  .roomsSelectionButtons {
+    :global(.MuiButtonBase-root) {
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    :global(.MuiButton-label) {
+      text-transform: none;
+      font-family: "Ubuntu Condensed", sans-serif;
+      font-size: 1.5rem;
+    }
+  }
 }

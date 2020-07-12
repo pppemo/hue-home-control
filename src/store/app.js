@@ -3,7 +3,7 @@ import { COOKIES } from "./../constants";
 
 export default {
   state: {
-    selectedRoomId: Cookies.get(COOKIES.SELECTED_ROOM_ID),
+    selectedRoomsIds: Cookies.get(COOKIES.SELECTED_ROOMS_IDS)?.split(","),
     defaultSceneId: Cookies.get(COOKIES.DEFAULT_SCENE_ID),
     isScreenSaverOn: false,
     selectedRoomSceneId: null,
@@ -20,9 +20,9 @@ export default {
       ...state,
       isScreenSaverOn,
     }),
-    setSelectedRoomId: (state, selectedRoomId) => ({
+    setSelectedRoomsIds: (state, selectedRoomsIds) => ({
       ...state,
-      selectedRoomId,
+      selectedRoomsIds,
     }),
     setSelectedRoomSceneId: (state, selectedRoomSceneId) => ({
       ...state,
