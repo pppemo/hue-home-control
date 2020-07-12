@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { dispatch } from "./../../store";
-import { isAnyLightOnInSelectedRoom } from "./../../store/selectors/lights";
 import Switch from "./../../components/Switch";
 import { COOKIES } from "./../../constants";
 import Cookies from "js-cookie";
@@ -79,7 +78,6 @@ const mapState = (state) => ({
   defaultSceneId: state.app.defaultSceneId,
   config: state.app.config,
   selectedRoomSceneId: state.app.selectedRoomSceneId,
-  isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
 });
 
 const mapDispatch = ({ rooms }) => ({

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { isDataLoaded } from "./store/selectors/global";
-import { isAnyLightOnInSelectedRoom } from "./store/selectors/lights";
+import { isAnyLightOnInSelectedRooms } from "./store/selectors/lights";
 import { hasScenes } from "./store/selectors/scenes";
 import Config from "./containers/Config";
 import RoomSwitches from "./containers/RoomSwitches";
@@ -21,8 +21,8 @@ import Cookies from "js-cookie";
 import { COOKIES } from "./constants";
 import styles from "./App.module.scss";
 
-const SCREEN_SAVER_WAIT_TIME = 5000;
-const BACK_TO_MAIN_SCREEN_TIME = 3500;
+const SCREEN_SAVER_WAIT_TIME = 8500;
+const BACK_TO_MAIN_SCREEN_TIME = 5000;
 const SETTINGS_SCREEN_ID = 0;
 const SCENES_SCREEN_ID = 1;
 const LIGHTS_SCREEN_ID = 2;
@@ -32,7 +32,7 @@ function App({
   isScreenSaverOn,
   enableScreenSaver,
   disableScreenSaver,
-  isAnyLightOnInSelectedRoom,
+  isAnyLightOnInSelectedRooms,
   turnOnDefaultSceneInSelectedRoom,
   selectedRoomsIds,
   hasScenes,
@@ -92,7 +92,7 @@ function App({
   };
 
   const onUserIdle = () => {
-    if (!isAnyLightOnInSelectedRoom) {
+    if (!isAnyLightOnInSelectedRooms) {
       enableScreenSaver();
       fullyApi("setScreenBrightness", 0);
       clearInterval(dataPollingInterval);
@@ -194,7 +194,7 @@ function App({
 const mapState = (state) => ({
   isDataLoaded: isDataLoaded(state),
   isScreenSaverOn: state.app.isScreenSaverOn,
-  isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
+  isAnyLightOnInSelectedRooms: isAnyLightOnInSelectedRooms(state),
   selectedRoomsIds: state.app.selectedRoomsIds,
   hasScenes: hasScenes(state),
 });
