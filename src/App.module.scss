@@ -3,6 +3,8 @@
 :global {
   body {
     font-family: "Ubuntu Condensed", sans-serif;
+    background-color: black;
+    color: white;
   }
 
   a {
@@ -49,4 +51,23 @@
   bottom: 2.5vh;
   left: 0;
   right: 0;
+}
+
+.noBridgeContainer {
+  margin: 0 auto;
+  width: 75vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 2rem;
+
+  .helloLabel {
+    font-size: 4rem;
+    text-align: center;
+  }
+
+  .continueButton {
+    font-size: 1.5rem;
+  }
 }

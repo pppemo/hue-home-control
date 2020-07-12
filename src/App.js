@@ -8,6 +8,7 @@ import RoomSelection from "./containers/RoomSelection";
 import RoomSwitches from "./containers/RoomSwitches";
 import SceneSwitches from "./containers/SceneSwitches";
 import { dispatch } from "./store";
+import { Button } from "@material-ui/core";
 import Spinner from "./components/Spinner";
 import CarouselIndicator from "./components/CarouselIndicator";
 import { slide as Menu } from "react-burger-menu";
@@ -107,12 +108,29 @@ function App({
 
   if (!Bridge.isBridgeDiscovered()) {
     return (
-      <div>
-        No bridge is detected. Press a button on a bridge and then click
-        "Continue".
-        <button onClick={() => Bridge.createBridgeUser(nanoid())}>
-          Continue
-        </button>
+      <div className={styles.noBridgeContainer}>
+        <div className={styles.helloLabel}>Hello!</div>
+        <br />
+        <br />
+        We didn't detect any Hue bridge. In order to start:
+        <br />
+        <br />
+        1. Press blue button on your bridge.
+        <br />
+        2. Click "Continue"
+        <br />
+        <br />
+        <div>
+          <Button
+            className={styles.continueButton}
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => Bridge.createBridgeUser(nanoid())}
+          >
+            Continue
+          </Button>
+        </div>
       </div>
     );
   }
