@@ -32,14 +32,16 @@ export default {
       await dispatch.sensors.handleLightActionTriggered();
       dispatch.rooms.setState({ id, state });
     },
-    async turnOffLightsInSelectedRoom() {
+    async turnOffLightsInSelectedRooms() {
       const {
-        app: { selectedRoomId },
+        app: { selectedRoomsIds },
       } = store.getState();
-      await Gateway.setGroupState(selectedRoomId, { on: false });
-      await dispatch.sensors.handleLightActionTriggered();
-      dispatch.rooms.setState({ id: selectedRoomId, state: { on: false } });
-      dispatch.app.setSelectedRoomSceneId(null);
+      selectedRoomsIds.forEach(async (selectedRoomId) => {
+        await Gateway.setGroupState(selectedRoomId, { on: false });
+        await dispatch.sensors.handleLightActionTriggered();
+        dispatch.rooms.setState({ id: selectedRoomId, state: { on: false } });
+        dispatch.app.setSelectedRoomSceneId(null);
+      });
     },
     async turnOnDefaultSceneInSelectedRoom() {
       const {

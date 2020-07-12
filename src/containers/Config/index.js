@@ -56,12 +56,15 @@ const Config = ({ setConfigParamInStorage, rooms, selectedRoomsIds }) => {
       [id]: value,
     };
 
-    setSelectedRooms(selectedRoomsObject);
-
     const selectedRoomsIds = Object.entries(selectedRoomsObject)
       .filter((entry) => entry[1])
       .map(([id, _]) => id);
 
+    if (!selectedRoomsIds.length && !value) {
+      return;
+    }
+
+    setSelectedRooms(selectedRoomsObject);
     dispatch.app.setSelectedRoomsIds(selectedRoomsIds);
     Cookies.set(COOKIES.SELECTED_ROOMS_IDS, selectedRoomsIds.join(","));
   };

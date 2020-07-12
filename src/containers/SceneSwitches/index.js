@@ -9,30 +9,32 @@ import { PowerSettingsNew } from "@material-ui/icons";
 import styles from "./SceneSwitches.module.scss";
 
 const SceneSwitches = ({
-  selectedRoomId,
+  selectedRoomsIds,
   selectedRoomSceneId,
   defaultSceneId,
   scenes,
+  rooms,
   recallScene,
   config,
-  turnOffLightsInSelectedRoom,
+  turnOffLightsInSelectedRooms,
 }) => {
   const scenesArray = Object.entries(scenes)
     .map(([key, props]) => ({
       id: key,
       ...props,
     }))
-    .filter((scene) => scene.group === selectedRoomId && !scene.recycle);
+    .filter((scene) => selectedRoomsIds.includes(scene.group) && !scene.recycle)
+    .sort((sceneA, sceneB) => (sceneA.group <= sceneB.group ? -1 : 1));
 
-  const handleSwitchToggle = (isOn, sceneId) => {
+  const handleSwitchToggle = (isOn, scene) => {
     if (isOn) {
-      recallScene(selectedRoomId, sceneId).then(() =>
+      recallScene(scene.group, scene.id).then(() =>
         dispatch.app
-          .setSelectedRoomSceneId(sceneId)
+          .setSelectedRoomSceneId(scene.id)
           .then(() => dispatch.lights.getLights())
       );
     } else {
-      turnOffLightsInSelectedRoom().then(() => dispatch.lights.getLights());
+      turnOffLightsInSelectedRooms().then(() => dispatch.lights.getLights());
     }
   };
 
@@ -53,8 +55,9 @@ const SceneSwitches = ({
           key={scene.id}
           isFavourite={scene.id === defaultSceneId}
           isOn={scene.id === selectedRoomSceneId}
+          aboveLabel={selectedRoomsIds.length > 1 && rooms[scene.group].name}
           lightName={scene.name}
-          onPress={(isOn) => handleSwitchToggle(isOn, scene.id)}
+          onPress={(isOn) => handleSwitchToggle(isOn, scene)}
           onLongPress={() => handleSwitchLongPress(scene.id)}
           isSoundOn={config.isSoundOn}
         />
@@ -71,7 +74,8 @@ const SceneSwitches = ({
 
 const mapState = (state) => ({
   scenes: state.scenes,
-  selectedRoomId: state.app.selectedRoomId,
+  rooms: state.rooms,
+  selectedRoomsIds: state.app.selectedRoomsIds,
   defaultSceneId: state.app.defaultSceneId,
   config: state.app.config,
   selectedRoomSceneId: state.app.selectedRoomSceneId,
@@ -81,7 +85,7 @@ const mapState = (state) => ({
 const mapDispatch = ({ rooms }) => ({
   recallScene: (roomId, sceneId) =>
     rooms.setRoomState({ id: roomId, newState: { scene: sceneId } }),
-  turnOffLightsInSelectedRoom: () => rooms.turnOffLightsInSelectedRoom(),
+  turnOffLightsInSelectedRooms: () => rooms.turnOffLightsInSelectedRooms(),
 });
 
 export default connect(mapState, mapDispatch)(SceneSwitches);

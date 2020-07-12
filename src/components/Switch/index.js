@@ -8,6 +8,7 @@ import styles from "./Switch.module.scss";
 
 const Switch = ({
   lightName,
+  aboveLabel,
   isOn: isOnProp,
   isDisabled,
   isFavourite,
@@ -60,6 +61,9 @@ const Switch = ({
                   ⭐️
                 </span>
               )}
+              {aboveLabel && (
+                <div className={styles.aboveLabel}>{aboveLabel}</div>
+              )}
               {lightName}
             </div>
           </ButtonBase>
@@ -72,6 +76,7 @@ const Switch = ({
 Switch.propTypes = {
   lightName: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
     .isRequired,
+  aboveLabel: PropTypes.string,
   isOn: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool,
   isFavourite: PropTypes.bool,
@@ -82,6 +87,7 @@ Switch.propTypes = {
 };
 
 Switch.defaultProps = {
+  aboveLabel: undefined,
   isDisabled: false,
   onLongPress: undefined,
   isFavourite: false,

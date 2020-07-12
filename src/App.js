@@ -4,7 +4,6 @@ import { isDataLoaded } from "./store/selectors/global";
 import { isAnyLightOnInSelectedRoom } from "./store/selectors/lights";
 import { hasScenes } from "./store/selectors/scenes";
 import Config from "./containers/Config";
-import RoomSelection from "./containers/RoomSelection";
 import RoomSwitches from "./containers/RoomSwitches";
 import SceneSwitches from "./containers/SceneSwitches";
 import { dispatch } from "./store";
@@ -24,9 +23,9 @@ import styles from "./App.module.scss";
 
 const SCREEN_SAVER_WAIT_TIME = 5000;
 const BACK_TO_MAIN_SCREEN_TIME = 3500;
-const ROOM_SELECTION_SCREEN_ID = 1;
-const SCENES_SCREEN_ID = 2;
-const LIGHTS_SCREEN_ID = 3;
+const SETTINGS_SCREEN_ID = 0;
+const SCENES_SCREEN_ID = 1;
+const LIGHTS_SCREEN_ID = 2;
 
 function App({
   isDataLoaded,
@@ -35,14 +34,14 @@ function App({
   disableScreenSaver,
   isAnyLightOnInSelectedRoom,
   turnOnDefaultSceneInSelectedRoom,
-  selectedRoomId,
+  selectedRoomsIds,
   hasScenes,
 }) {
   const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
     SCREEN_SAVER_WAIT_TIME
   );
   const [slideId, setSlideId] = useState(
-    selectedRoomId ? SCENES_SCREEN_ID : ROOM_SELECTION_SCREEN_ID
+    selectedRoomsIds ? SCENES_SCREEN_ID : SETTINGS_SCREEN_ID
   );
   const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
@@ -67,15 +66,9 @@ function App({
   };
 
   const buildSlides = () => {
-    const slides = [
-      <Config key="Config" />,
-      <RoomSelection
-        key="RoomSelection"
-        onRoomSelected={() => setSlideId(SCENES_SCREEN_ID)}
-      />,
-    ];
+    const slides = [<Config key="Config" />];
 
-    if (selectedRoomId) {
+    if (!!selectedRoomsIds) {
       hasScenes && slides.push(<SceneSwitches key="SceneSwitches" />);
       slides.push(<RoomSwitches key="RoomSwitches" />);
     }
@@ -88,7 +81,7 @@ function App({
     } = event;
     createDataPollingInterval();
     if (isScreenSaverOn) {
-      selectedRoomId &&
+      !!selectedRoomsIds &&
         type === "touchstart" &&
         turnOnDefaultSceneInSelectedRoom().then(() =>
           dispatch.lights.getLights()
@@ -202,7 +195,7 @@ const mapState = (state) => ({
   isDataLoaded: isDataLoaded(state),
   isScreenSaverOn: state.app.isScreenSaverOn,
   isAnyLightOnInSelectedRoom: isAnyLightOnInSelectedRoom(state),
-  selectedRoomId: state.app.selectedRoomId,
+  selectedRoomsIds: state.app.selectedRoomsIds,
   hasScenes: hasScenes(state),
 });
 
