@@ -14,7 +14,12 @@ const Config = ({
   selectedRoomsIds,
   config,
 }) => {
-  const { defaultReturnToPage, isSoundOn, actionTriggerSensorName } = config;
+  const {
+    defaultReturnToPage,
+    isSoundOn,
+    actionTriggerSensorName,
+    isScreensaverOn,
+  } = config;
   const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] = useState(
     false
   );
@@ -47,6 +52,11 @@ const Config = ({
   const handleSoundsOnSwitch = (_, soundsOn) => {
     Cookies.set(COOKIES.CONFIG_SOUNDS_ON, soundsOn);
     setConfigParamInStorage("isSoundOn", soundsOn);
+  };
+
+  const handleScreensaverSwitch = (_, isScreensaverOn) => {
+    Cookies.set(COOKIES.CONFIG_SCREENSAVER_ON, isScreensaverOn);
+    setConfigParamInStorage("isScreensaverOn", isScreensaverOn);
   };
 
   const toggleSelectedRoom = (id, value) => {
@@ -102,6 +112,13 @@ const Config = ({
           Scenes
         </ToggleButton>
       </ToggleButtonGroup>
+
+      <div className={styles.configLabel}>Screensaver</div>
+      <Switch
+        checked={isScreensaverOn}
+        onChange={handleScreensaverSwitch}
+        color="primary"
+      />
 
       <Box className={styles.advancedOptionsContainer}>
         <Button variant="contained" onClick={handleShowAdvancedOptionsButton}>

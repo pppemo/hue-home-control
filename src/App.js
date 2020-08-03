@@ -94,7 +94,7 @@ function App({
   };
 
   const onUserIdle = () => {
-    if (!isAnyLightOnInSelectedRooms) {
+    if (!isAnyLightOnInSelectedRooms && config.isScreensaverOn) {
       enableScreenSaver();
       fullyApi("setScreenBrightness", 0);
       clearInterval(dataPollingInterval);

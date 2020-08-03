@@ -1,6 +1,22 @@
 import Cookies from "js-cookie";
 import { COOKIES } from "./../constants";
 
+const getValueOrDefault = (cookieName, defaultValue) => {
+  const cookieValue = Cookies.get(cookieName);
+  switch (cookieValue) {
+    case undefined:
+    case null:
+    case "":
+      return defaultValue;
+    case "true":
+      return true;
+    case "false":
+      return false;
+    default:
+      return cookieValue;
+  }
+};
+
 export default {
   state: {
     selectedRoomsIds: Cookies.get(COOKIES.SELECTED_ROOMS_IDS)?.split(","),
@@ -8,13 +24,16 @@ export default {
     isScreenSaverOn: false,
     selectedRoomSceneId: null,
     config: {
-      actionTriggerSensorName: Cookies.get(
-        COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME
+      actionTriggerSensorName: getValueOrDefault(
+        COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME,
+        null
       ),
-      isSoundOn:
-        Cookies.get(COOKIES.CONFIG_SOUNDS_ON) === "true" ? true : false,
-      defaultReturnToPage:
-        Cookies.get(COOKIES.CONFIG_DEFAULT_PAGE_TYPE) || "scenes",
+      isSoundOn: getValueOrDefault(COOKIES.CONFIG_SOUNDS_ON, false),
+      isScreensaverOn: getValueOrDefault(COOKIES.CONFIG_SCREENSAVER_ON, true),
+      defaultReturnToPage: getValueOrDefault(
+        COOKIES.CONFIG_DEFAULT_PAGE_TYPE,
+        "scenes"
+      ),
     },
   },
   reducers: {
