@@ -8,10 +8,14 @@ import { COOKIES } from "../../constants";
 import Cookies from "js-cookie";
 import styles from "./Config.module.scss";
 
-const Config = ({ setConfigParamInStorage, rooms, selectedRoomsIds }) => {
-  const [defaultReturnToPage, setDefaultReturnToPage] = useState(
-    Cookies.get(COOKIES.DEFAULT_PAGE_TYPE) || "scenes"
-  );
+const Config = ({
+  setConfigParamInStorage,
+  rooms,
+  selectedRoomsIds,
+  config,
+}) => {
+  const { defaultReturnToPage } = config;
+
   const [
     configActionTriggerSensorName,
     setConfigActionTriggerSensorName,
@@ -29,8 +33,8 @@ const Config = ({ setConfigParamInStorage, rooms, selectedRoomsIds }) => {
 
   const setDefaultPageType = (_, pageType) => {
     if (pageType) {
-      Cookies.set(COOKIES.DEFAULT_PAGE_TYPE, pageType);
-      setDefaultReturnToPage(pageType);
+      Cookies.set(COOKIES.CONFIG_DEFAULT_PAGE_TYPE, pageType);
+      setConfigParamInStorage("defaultReturnToPage", pageType);
     }
   };
 
@@ -139,6 +143,7 @@ const Config = ({ setConfigParamInStorage, rooms, selectedRoomsIds }) => {
 const mapState = (state) => ({
   rooms: state.rooms,
   selectedRoomsIds: state.app.selectedRoomsIds,
+  config: state.app.config,
 });
 
 const mapDispatch = ({ app }) => ({

@@ -13,6 +13,8 @@ export default {
       ),
       isSoundOn:
         Cookies.get(COOKIES.CONFIG_SOUNDS_ON) === "true" ? true : false,
+      defaultReturnToPage:
+        Cookies.get(COOKIES.CONFIG_DEFAULT_PAGE_TYPE) || "scenes",
     },
   },
   reducers: {

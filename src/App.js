@@ -36,6 +36,7 @@ function App({
   turnOnDefaultSceneInSelectedRoom,
   selectedRoomsIds,
   hasScenes,
+  config,
 }) {
   const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
     SCREEN_SAVER_WAIT_TIME
@@ -145,7 +146,7 @@ function App({
     <IdleMonitor
       timeout={BACK_TO_MAIN_SCREEN_TIME}
       onIdle={() =>
-        Cookies.get(COOKIES.DEFAULT_PAGE_TYPE) === "lights"
+        config.defaultReturnToPage === "lights"
           ? setSlideId(LIGHTS_SCREEN_ID)
           : setSlideId(SCENES_SCREEN_ID)
       }
@@ -198,6 +199,7 @@ const mapState = (state) => ({
   isAnyLightOnInSelectedRooms: isAnyLightOnInSelectedRooms(state),
   selectedRoomsIds: state.app.selectedRoomsIds,
   hasScenes: hasScenes(state),
+  config: state.app.config,
 });
 
 const mapDispatch = ({ app, rooms }) => ({
