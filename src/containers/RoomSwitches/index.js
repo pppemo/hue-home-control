@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { dispatch } from "./../../store";
 import Switch from "./../../components/Switch";
 import { PowerSettingsNew } from "@material-ui/icons";
+import { CONFIG_KEYS } from "./../../constants";
 import styles from "./RoomSwitches.module.scss";
 
 const RoomSwitches = ({
@@ -32,24 +33,28 @@ const RoomSwitches = ({
     turnOffLightsInSelectedRooms().then(() => dispatch.lights.getLights());
   };
 
+  const shouldShowAboveLabel =
+    selectedRoomsIds.length > 1 &&
+    config[CONFIG_KEYS.SHOULD_SHOW_ROOM_LABEL_ON_SWITCH];
+
   return (
     <div className={styles.switchesContainer}>
       {roomsLights.map((light) => (
         <Switch
           key={light.id}
           isOn={light.state.on}
-          aboveLabel={selectedRoomsIds.length > 1 && light.roomName}
+          aboveLabel={shouldShowAboveLabel && light.roomName}
           lightName={light.name}
           isDisabled={!light.state.reachable}
           onPress={(state) => handleSwitchToggle(light.id, state)}
-          isSoundOn={config.isSoundOn}
+          isSoundOn={config[CONFIG_KEYS.SOUNDS_ON]}
         />
       ))}
       <Switch
         lightName={<PowerSettingsNew style={{ fontSize: 50 }} />}
         isStateless
         onPress={handleOffButton}
-        isSoundOn={config.isSoundOn}
+        isSoundOn={config[CONFIG_KEYS.SOUNDS_ON]}
       />
     </div>
   );

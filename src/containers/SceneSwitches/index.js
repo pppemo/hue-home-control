@@ -5,6 +5,7 @@ import Switch from "./../../components/Switch";
 import { COOKIES } from "./../../constants";
 import Cookies from "js-cookie";
 import { PowerSettingsNew } from "@material-ui/icons";
+import { CONFIG_KEYS } from "./../../constants";
 import styles from "./SceneSwitches.module.scss";
 
 const SceneSwitches = ({
@@ -47,6 +48,10 @@ const SceneSwitches = ({
     }
   };
 
+  const shouldShowAboveLabel =
+    selectedRoomsIds.length > 1 &&
+    config[CONFIG_KEYS.SHOULD_SHOW_ROOM_LABEL_ON_SWITCH];
+
   return (
     <div className={styles.switchesContainer}>
       {scenesArray.map((scene) => (
@@ -54,18 +59,18 @@ const SceneSwitches = ({
           key={scene.id}
           isFavourite={scene.id === defaultSceneId}
           isOn={scene.id === selectedRoomSceneId}
-          aboveLabel={selectedRoomsIds.length > 1 && rooms[scene.group].name}
+          aboveLabel={shouldShowAboveLabel && rooms[scene.group].name}
           lightName={scene.name}
           onPress={(isOn) => handleSwitchToggle(isOn, scene)}
           onLongPress={() => handleSwitchLongPress(scene.id)}
-          isSoundOn={config.isSoundOn}
+          isSoundOn={config[CONFIG_KEYS.SOUNDS_ON]}
         />
       ))}
       <Switch
         lightName={<PowerSettingsNew style={{ fontSize: 50 }} />}
         isStateless
         onPress={() => handleSwitchToggle(false)}
-        isSoundOn={config.isSoundOn}
+        isSoundOn={config[CONFIG_KEYS.SOUNDS_ON]}
       />
     </div>
   );

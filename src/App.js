@@ -17,8 +17,7 @@ import { Carousel } from "react-responsive-carousel";
 import { fullyApi } from "./helpers/fully";
 import Bridge from "./helpers/bridge";
 import { nanoid } from "nanoid";
-import Cookies from "js-cookie";
-import { COOKIES } from "./constants";
+import { CONFIG_KEYS } from "./constants";
 import styles from "./App.module.scss";
 
 const SCREEN_SAVER_WAIT_TIME = 8500;
@@ -94,7 +93,7 @@ function App({
   };
 
   const onUserIdle = () => {
-    if (!isAnyLightOnInSelectedRooms && config.isScreensaverOn) {
+    if (!isAnyLightOnInSelectedRooms && config[CONFIG_KEYS.SCREENSAVER_ON]) {
       enableScreenSaver();
       fullyApi("setScreenBrightness", 0);
       clearInterval(dataPollingInterval);
@@ -146,7 +145,7 @@ function App({
     <IdleMonitor
       timeout={BACK_TO_MAIN_SCREEN_TIME}
       onIdle={() =>
-        config.defaultReturnToPage === "lights"
+        config[CONFIG_KEYS.DEFAULT_PAGE_TYPE] === "lights"
           ? setSlideId(LIGHTS_SCREEN_ID)
           : setSlideId(SCENES_SCREEN_ID)
       }

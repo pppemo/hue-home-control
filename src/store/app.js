@@ -1,8 +1,8 @@
 import Cookies from "js-cookie";
-import { COOKIES } from "./../constants";
+import { COOKIES, CONFIG_KEYS } from "./../constants";
 
-const getValueOrDefault = (cookieName, defaultValue) => {
-  const cookieValue = Cookies.get(cookieName);
+const getConfigValueOrDefault = (configKey, defaultValue) => {
+  const cookieValue = Cookies.get(`CONFIG_${configKey}`);
   switch (cookieValue) {
     case undefined:
     case null:
@@ -24,14 +24,24 @@ export default {
     isScreenSaverOn: false,
     selectedRoomSceneId: null,
     config: {
-      actionTriggerSensorName: getValueOrDefault(
-        COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME,
+      [CONFIG_KEYS.ACTION_TRIGGER_SENSOR_NAME]: getConfigValueOrDefault(
+        CONFIG_KEYS.ACTION_TRIGGER_SENSOR_NAME,
         null
       ),
-      isSoundOn: getValueOrDefault(COOKIES.CONFIG_SOUNDS_ON, false),
-      isScreensaverOn: getValueOrDefault(COOKIES.CONFIG_SCREENSAVER_ON, true),
-      defaultReturnToPage: getValueOrDefault(
-        COOKIES.CONFIG_DEFAULT_PAGE_TYPE,
+      [CONFIG_KEYS.SOUNDS_ON]: getConfigValueOrDefault(
+        CONFIG_KEYS.SOUNDS_ON,
+        false
+      ),
+      [CONFIG_KEYS.SCREENSAVER_ON]: getConfigValueOrDefault(
+        CONFIG_KEYS.SCREENSAVER_ON,
+        true
+      ),
+      [CONFIG_KEYS.SHOULD_SHOW_ROOM_LABEL_ON_SWITCH]: getConfigValueOrDefault(
+        CONFIG_KEYS.SHOULD_SHOW_ROOM_LABEL_ON_SWITCH,
+        true
+      ),
+      [CONFIG_KEYS.DEFAULT_PAGE_TYPE]: getConfigValueOrDefault(
+        CONFIG_KEYS.DEFAULT_PAGE_TYPE,
         "scenes"
       ),
     },

@@ -4,7 +4,7 @@ import ToggleButton from "@material-ui/lab/ToggleButton";
 import { Button, Box } from "@material-ui/core";
 import { dispatch } from "./../../store";
 import { ToggleButtonGroup, TextField, Switch } from "./../../components/UI";
-import { COOKIES } from "../../constants";
+import { COOKIES, CONFIG_KEYS } from "../../constants";
 import Cookies from "js-cookie";
 import styles from "./Config.module.scss";
 
@@ -14,49 +14,24 @@ const Config = ({
   selectedRoomsIds,
   config,
 }) => {
-  const {
-    defaultReturnToPage,
-    isSoundOn,
-    actionTriggerSensorName,
-    isScreensaverOn,
-  } = config;
   const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] = useState(
     false
   );
+
   const [selectedRooms, setSelectedRooms] = useState(
     selectedRoomsIds?.reduce((acc, value) => ({ ...acc, [value]: true }), {}) ||
       {}
   );
 
-  const handleShowAdvancedOptionsButton = () =>
-    setShouldShowAdvancedOptions(!shouldShowAdvancedOptions);
-
-  const setDefaultPageType = (_, pageType) => {
-    if (pageType) {
-      Cookies.set(COOKIES.CONFIG_DEFAULT_PAGE_TYPE, pageType);
-      setConfigParamInStorage("defaultReturnToPage", pageType);
-    }
+  const storeSetting = (configKey, value) => {
+    Cookies.set(`CONFIG_${configKey}`, value);
+    setConfigParamInStorage(configKey, value);
   };
 
   const handleConfigActionTriggerSensorNameChange = (event) => {
     const { value } = event.target;
-    if (value && value !== "") {
-      Cookies.set(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME, value);
-      setConfigParamInStorage("actionTriggerSensorName", value);
-    } else {
-      Cookies.remove(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME);
-      setConfigParamInStorage("actionTriggerSensorName", null);
-    }
-  };
-
-  const handleSoundsOnSwitch = (_, soundsOn) => {
-    Cookies.set(COOKIES.CONFIG_SOUNDS_ON, soundsOn);
-    setConfigParamInStorage("isSoundOn", soundsOn);
-  };
-
-  const handleScreensaverSwitch = (_, isScreensaverOn) => {
-    Cookies.set(COOKIES.CONFIG_SCREENSAVER_ON, isScreensaverOn);
-    setConfigParamInStorage("isScreensaverOn", isScreensaverOn);
+    const valueToStore = value && value !== "" ? value : undefined;
+    storeSetting(CONFIG_KEYS.ACTION_TRIGGER_SENSOR_NAME, valueToStore);
   };
 
   const toggleSelectedRoom = (id, value) => {
@@ -100,9 +75,11 @@ const Config = ({
 
       <div className={styles.configLabel}>Default "return to" page</div>
       <ToggleButtonGroup
-        value={defaultReturnToPage}
+        value={config[CONFIG_KEYS.DEFAULT_PAGE_TYPE]}
         exclusive
-        onChange={setDefaultPageType}
+        onChange={(_, value) =>
+          value && storeSetting(CONFIG_KEYS.DEFAULT_PAGE_TYPE, value)
+        }
         aria-label="default return to screen"
       >
         <ToggleButton value="lights" aria-label="lights">
@@ -115,13 +92,18 @@ const Config = ({
 
       <div className={styles.configLabel}>Screensaver</div>
       <Switch
-        checked={isScreensaverOn}
-        onChange={handleScreensaverSwitch}
+        checked={config[CONFIG_KEYS.SCREENSAVER_ON]}
+        onChange={(_, value) => storeSetting(CONFIG_KEYS.SCREENSAVER_ON, value)}
         color="primary"
       />
 
       <Box className={styles.advancedOptionsContainer}>
-        <Button variant="contained" onClick={handleShowAdvancedOptionsButton}>
+        <Button
+          variant="contained"
+          onClick={() =>
+            setShouldShowAdvancedOptions(!shouldShowAdvancedOptions)
+          }
+        >
           {shouldShowAdvancedOptions
             ? "Hide advanced options"
             : "Show advanced options"}
@@ -131,8 +113,24 @@ const Config = ({
           <>
             <div className={styles.configLabel}>Click sounds</div>
             <Switch
-              checked={isSoundOn}
-              onChange={handleSoundsOnSwitch}
+              checked={config[CONFIG_KEYS.SOUNDS_ON]}
+              onChange={(_, value) =>
+                storeSetting(CONFIG_KEYS.SOUNDS_ON, value)
+              }
+              color="primary"
+            />
+
+            <div className={styles.configLabel}>
+              Show room label on switches when multiple rooms selected
+            </div>
+            <Switch
+              checked={config[CONFIG_KEYS.SHOULD_SHOW_ROOM_LABEL_ON_SWITCH]}
+              onChange={(_, value) =>
+                storeSetting(
+                  CONFIG_KEYS.SHOULD_SHOW_ROOM_LABEL_ON_SWITCH,
+                  value
+                )
+              }
               color="primary"
             />
 
@@ -142,7 +140,7 @@ const Config = ({
             <TextField
               label="Sensor name"
               variant="filled"
-              value={actionTriggerSensorName}
+              value={config[CONFIG_KEYS.ACTION_TRIGGER_SENSOR_NAME]}
               onChange={handleConfigActionTriggerSensorNameChange}
             />
           </>

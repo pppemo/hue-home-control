@@ -1,5 +1,6 @@
 import Gateway from "../gateway";
 import store from "./../store";
+import { CONFIG_KEYS } from "./../constants";
 
 const getSensorIdByItsName = (sensors, name) => {
   if (sensors) {
@@ -23,11 +24,12 @@ export default {
     },
     async handleLightActionTriggered() {
       const {
-        app: {
-          config: { actionTriggerSensorName },
-        },
+        app: { config },
         sensors,
       } = store.getState();
+
+      const actionTriggerSensorName =
+        config[CONFIG_KEYS.ACTION_TRIGGER_SENSOR_NAME];
 
       if (actionTriggerSensorName) {
         const sensorId = getSensorIdByItsName(sensors, actionTriggerSensorName);
