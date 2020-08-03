@@ -14,12 +14,7 @@ const Config = ({
   selectedRoomsIds,
   config,
 }) => {
-  const { defaultReturnToPage, isSoundOn } = config;
-
-  const [
-    configActionTriggerSensorName,
-    setConfigActionTriggerSensorName,
-  ] = useState(Cookies.get(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME));
+  const { defaultReturnToPage, isSoundOn, actionTriggerSensorName } = config;
   const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] = useState(
     false
   );
@@ -28,6 +23,9 @@ const Config = ({
       {}
   );
 
+  const handleShowAdvancedOptionsButton = () =>
+    setShouldShowAdvancedOptions(!shouldShowAdvancedOptions);
+
   const setDefaultPageType = (_, pageType) => {
     if (pageType) {
       Cookies.set(COOKIES.CONFIG_DEFAULT_PAGE_TYPE, pageType);
@@ -35,14 +33,15 @@ const Config = ({
     }
   };
 
-  const handleShowAdvancedOptionsButton = () =>
-    setShouldShowAdvancedOptions(!shouldShowAdvancedOptions);
-
   const handleConfigActionTriggerSensorNameChange = (event) => {
     const { value } = event.target;
-    setConfigActionTriggerSensorName(value);
-    Cookies.set(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME, value);
-    setConfigParamInStorage("actionTriggerSensorName", value);
+    if (value && value !== "") {
+      Cookies.set(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME, value);
+      setConfigParamInStorage("actionTriggerSensorName", value);
+    } else {
+      Cookies.remove(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME);
+      setConfigParamInStorage("actionTriggerSensorName", null);
+    }
   };
 
   const handleSoundsOnSwitch = (_, soundsOn) => {
@@ -126,7 +125,7 @@ const Config = ({
             <TextField
               label="Sensor name"
               variant="filled"
-              value={configActionTriggerSensorName}
+              value={actionTriggerSensorName}
               onChange={handleConfigActionTriggerSensorNameChange}
             />
           </>
