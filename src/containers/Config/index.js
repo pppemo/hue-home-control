@@ -14,7 +14,7 @@ const Config = ({
   selectedRoomsIds,
   config,
 }) => {
-  const { defaultReturnToPage } = config;
+  const { defaultReturnToPage, isSoundOn } = config;
 
   const [
     configActionTriggerSensorName,
@@ -22,9 +22,6 @@ const Config = ({
   ] = useState(Cookies.get(COOKIES.CONFIG_ACTION_TRIGGER_SENSOR_NAME));
   const [shouldShowAdvancedOptions, setShouldShowAdvancedOptions] = useState(
     false
-  );
-  const [soundsOn, setSoundsOn] = useState(
-    Cookies.get(COOKIES.CONFIG_SOUNDS_ON) === "false" ? false : true
   );
   const [selectedRooms, setSelectedRooms] = useState(
     selectedRoomsIds?.reduce((acc, value) => ({ ...acc, [value]: true }), {}) ||
@@ -49,7 +46,6 @@ const Config = ({
   };
 
   const handleSoundsOnSwitch = (_, soundsOn) => {
-    setSoundsOn(soundsOn);
     Cookies.set(COOKIES.CONFIG_SOUNDS_ON, soundsOn);
     setConfigParamInStorage("isSoundOn", soundsOn);
   };
@@ -119,7 +115,7 @@ const Config = ({
           <>
             <div className={styles.configLabel}>Click sounds</div>
             <Switch
-              checked={soundsOn}
+              checked={isSoundOn}
               onChange={handleSoundsOnSwitch}
               color="primary"
             />
