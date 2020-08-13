@@ -22,6 +22,7 @@ import styles from "./App.module.scss";
 
 const SCREEN_SAVER_WAIT_TIME = 8500;
 const BACK_TO_MAIN_SCREEN_TIME = 5000;
+const DATA_POLLING_INTERVAL = 5000;
 const SETTINGS_SCREEN_ID = 0;
 const SCENES_SCREEN_ID = 1;
 const LIGHTS_SCREEN_ID = 2;
@@ -37,11 +38,19 @@ function App({
   hasScenes,
   config,
 }) {
+  const getDefaultScreenId = () =>
+    config[CONFIG_KEYS.DEFAULT_PAGE_TYPE] === "lights"
+      ? LIGHTS_SCREEN_ID
+      : SCENES_SCREEN_ID;
+
   const [idleMonitorTimeout, setIdleMonitorTimeout] = useState(
     SCREEN_SAVER_WAIT_TIME
   );
+
+  const [isUserIdle, setIsUserIdle] = useState(false);
+
   const [slideId, setSlideId] = useState(
-    selectedRoomsIds ? SCENES_SCREEN_ID : SETTINGS_SCREEN_ID
+    selectedRoomsIds ? getDefaultScreenId() : SETTINGS_SCREEN_ID
   );
   const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
@@ -61,7 +70,10 @@ function App({
   }, []);
 
   const createDataPollingInterval = () => {
-    const interval = setInterval(() => dispatch.lights.getLights(), 10000);
+    const interval = setInterval(
+      () => dispatch.lights.getLights(true),
+      DATA_POLLING_INTERVAL
+    );
     setDataPollingInterval(interval);
   };
 
@@ -90,15 +102,26 @@ function App({
       fullyApi("setScreenBrightness", 64);
       dispatch.sensors.handleLightActionTriggered();
     }
+    setIsUserIdle(false);
   };
 
   const onUserIdle = () => {
-    if (!isAnyLightOnInSelectedRooms && config[CONFIG_KEYS.SCREENSAVER_ON]) {
+    if (config[CONFIG_KEYS.SCREENSAVER_ON] && !isAnyLightOnInSelectedRooms) {
       enableScreenSaver();
       fullyApi("setScreenBrightness", 0);
       clearInterval(dataPollingInterval);
+      setDataPollingInterval(null);
     }
+    setIsUserIdle(true);
   };
+
+  useEffect(() => {
+    isDataLoaded &&
+      isUserIdle &&
+      !isAnyLightOnInSelectedRooms &&
+      !isScreenSaverOn &&
+      onUserIdle();
+  }, [isAnyLightOnInSelectedRooms]);
 
   if (!Bridge.isBridgeDiscovered()) {
     return (
@@ -144,11 +167,7 @@ function App({
   return (
     <IdleMonitor
       timeout={BACK_TO_MAIN_SCREEN_TIME}
-      onIdle={() =>
-        config[CONFIG_KEYS.DEFAULT_PAGE_TYPE] === "lights"
-          ? setSlideId(LIGHTS_SCREEN_ID)
-          : setSlideId(SCENES_SCREEN_ID)
-      }
+      onIdle={() => setSlideId(getDefaultScreenId())}
     >
       <IdleMonitor
         timeout={idleMonitorTimeout}

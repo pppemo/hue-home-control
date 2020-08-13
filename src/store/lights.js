@@ -1,4 +1,6 @@
 import Gateway from "./../gateway";
+import store from "./../store";
+import { MerkleJson } from "merkle-json";
 
 export default {
   state: null,
@@ -21,8 +23,20 @@ export default {
     },
   },
   effects: (dispatch) => ({
-    async getLights() {
+    async getLights(shouldCheckForDifferences = false) {
       const rooms = await Gateway.getLightsInfo();
+
+      if (shouldCheckForDifferences) {
+        const { lights } = store.getState();
+
+        const hash1 = new MerkleJson().hash(lights);
+        const hash2 = new MerkleJson().hash(rooms);
+
+        if (hash1 !== hash2) {
+          dispatch.app.resetSelectedRoomSceneId();
+        }
+      }
+
       dispatch.lights.setLights(rooms);
     },
     async setLightState(lightState) {
