@@ -1,5 +1,4 @@
 import ResponseHistoryComparator from "./responseHistoryComparator";
-import { promises } from "fs";
 
 class DataPoller {
   private getData: any;
