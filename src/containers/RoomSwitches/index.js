@@ -4,6 +4,7 @@ import { dispatch } from "./../../store";
 import Switch from "./../../components/Switch";
 import { PowerSettingsNew } from "@material-ui/icons";
 import { CONFIG_KEYS } from "./../../constants";
+import { lightsDataPoller } from "./../../App";
 import styles from "./RoomSwitches.module.scss";
 
 const RoomSwitches = ({
@@ -27,10 +28,11 @@ const RoomSwitches = ({
   const handleSwitchToggle = (lightId, state) => {
     dispatch.app.resetSelectedRoomSceneId();
     state ? setLightOn(lightId) : setLightOff(lightId);
+    lightsDataPoller.resetInterval();
   };
 
   const handleOffButton = () => {
-    turnOffLightsInSelectedRooms().then(() => dispatch.lights.getLights());
+    turnOffLightsInSelectedRooms().then(() => lightsDataPoller.updateNow());
   };
 
   const shouldShowAboveLabel =

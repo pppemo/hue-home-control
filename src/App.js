@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { isDataLoaded } from "./store/selectors/global";
-import { isAnyLightOnInSelectedRooms } from "./store/selectors/lights";
+import {
+  isAnyLightOnInSelectedRoomsSelector,
+  lightsIdsOfSelectedRoomsSelector,
+} from "./store/selectors/lights";
 import { hasScenes } from "./store/selectors/scenes";
 import Config from "./containers/Config";
 import RoomSwitches from "./containers/RoomSwitches";
@@ -19,6 +22,8 @@ import Bridge from "./helpers/bridge";
 import { nanoid } from "nanoid";
 import { CONFIG_KEYS } from "./constants";
 import styles from "./App.module.scss";
+import DataPoller from "./gateway/dataPoller";
+import ResponseHistoryComparator from "./gateway/responseHistoryComparator";
 
 const SCREEN_SAVER_WAIT_TIME = 8500;
 const BACK_TO_MAIN_SCREEN_TIME = 5000;
@@ -27,12 +32,18 @@ const SETTINGS_SCREEN_ID = 0;
 const SCENES_SCREEN_ID = 1;
 const LIGHTS_SCREEN_ID = 2;
 
+export const lightsDataPoller = new DataPoller(
+  () => dispatch.lights.getLights(),
+  DATA_POLLING_INTERVAL
+);
+
 function App({
   isDataLoaded,
   isScreenSaverOn,
   enableScreenSaver,
   disableScreenSaver,
   isAnyLightOnInSelectedRooms,
+  lightsIdsOfSelectedRooms,
   turnOnDefaultSceneInSelectedRoom,
   selectedRoomsIds,
   hasScenes,
@@ -52,15 +63,13 @@ function App({
   const [slideId, setSlideId] = useState(
     selectedRoomsIds ? getDefaultScreenId() : SETTINGS_SCREEN_ID
   );
-  const [dataPollingInterval, setDataPollingInterval] = useState(null);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (Bridge.isBridgeDiscovered()) {
-      dispatch.rooms.getRooms();
       dispatch.lights.getLights();
+      dispatch.rooms.getRooms();
       dispatch.scenes.getScenes();
       dispatch.sensors.getSensors();
-      createDataPollingInterval();
       fullyApi(
         "bind",
         "onMotion",
@@ -69,13 +78,25 @@ function App({
     }
   }, []);
 
-  const createDataPollingInterval = () => {
-    const interval = setInterval(
-      () => dispatch.lights.getLights(true),
-      DATA_POLLING_INTERVAL
-    );
-    setDataPollingInterval(interval);
-  };
+  useEffect(() => {
+    if (isDataLoaded) {
+      lightsDataPoller.setResponseHistoryComparator(
+        new ResponseHistoryComparator()
+          .setExtractDataFn((data) =>
+            Object.entries(data)
+              .map(([key, value]) => ({ id: key, ...value }))
+              .filter(
+                (entry) =>
+                  lightsIdsOfSelectedRooms &&
+                  lightsIdsOfSelectedRooms.includes(entry.id)
+              )
+              .map((entry) => entry.state.on)
+          )
+          .setOnStateChangeFn(() => dispatch.app.resetSelectedRoomSceneId())
+      );
+      lightsDataPoller.start(false);
+    }
+  }, [isDataLoaded]);
 
   const buildSlides = () => {
     const slides = [<Config key="Config" />];
@@ -91,13 +112,10 @@ function App({
     const {
       event: { type },
     } = event;
-    createDataPollingInterval();
     if (isScreenSaverOn) {
       !!selectedRoomsIds &&
         type === "touchstart" &&
-        turnOnDefaultSceneInSelectedRoom().then(() =>
-          dispatch.lights.getLights()
-        );
+        turnOnDefaultSceneInSelectedRoom().then(() => lightsDataPoller.start());
       disableScreenSaver();
       fullyApi("setScreenBrightness", 64);
       dispatch.sensors.handleLightActionTriggered();
@@ -109,8 +127,7 @@ function App({
     if (config[CONFIG_KEYS.SCREENSAVER_ON] && !isAnyLightOnInSelectedRooms) {
       enableScreenSaver();
       fullyApi("setScreenBrightness", 0);
-      clearInterval(dataPollingInterval);
-      setDataPollingInterval(null);
+      lightsDataPoller.stop();
     }
     setIsUserIdle(true);
   };
@@ -214,7 +231,8 @@ function App({
 const mapState = (state) => ({
   isDataLoaded: isDataLoaded(state),
   isScreenSaverOn: state.app.isScreenSaverOn,
-  isAnyLightOnInSelectedRooms: isAnyLightOnInSelectedRooms(state),
+  isAnyLightOnInSelectedRooms: isAnyLightOnInSelectedRoomsSelector(state),
+  lightsIdsOfSelectedRooms: lightsIdsOfSelectedRoomsSelector(state),
   selectedRoomsIds: state.app.selectedRoomsIds,
   hasScenes: hasScenes(state),
   config: state.app.config,

@@ -6,6 +6,7 @@ import { COOKIES } from "./../../constants";
 import Cookies from "js-cookie";
 import { PowerSettingsNew } from "@material-ui/icons";
 import { CONFIG_KEYS } from "./../../constants";
+import { lightsDataPoller } from "./../../App";
 import styles from "./SceneSwitches.module.scss";
 
 const SceneSwitches = ({
@@ -31,10 +32,10 @@ const SceneSwitches = ({
       recallScene(scene.group, scene.id).then(() =>
         dispatch.app
           .setSelectedRoomSceneId(scene.id)
-          .then(() => dispatch.lights.getLights())
+          .then(() => lightsDataPoller.updateNow(true))
       );
     } else {
-      turnOffLightsInSelectedRooms().then(() => dispatch.lights.getLights());
+      turnOffLightsInSelectedRooms().then(() => lightsDataPoller.updateNow());
     }
   };
 

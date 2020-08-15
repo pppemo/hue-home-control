@@ -22,9 +22,10 @@ export default {
   },
   effects: (dispatch) => ({
     async getLights() {
-      const rooms = await Gateway.getLightsInfo();
-      dispatch.lights.setLights(rooms);
-      return rooms;
+      const lightsPromise = Gateway.getLightsInfo();
+      const lights = await lightsPromise;
+      dispatch.lights.setLights(lights);
+      return lightsPromise;
     },
     async setLightState(lightState) {
       const { id, newState: state } = lightState;

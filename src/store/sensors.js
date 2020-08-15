@@ -19,8 +19,10 @@ export default {
   },
   effects: (dispatch) => ({
     async getSensors() {
-      const sensors = await Gateway.getSensors();
+      const sensorsPromise = Gateway.getSensors();
+      const sensors = await sensorsPromise;
       dispatch.sensors.setSensors(sensors);
+      return sensorsPromise;
     },
     async handleLightActionTriggered() {
       const {

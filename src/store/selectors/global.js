@@ -7,5 +7,5 @@ const sensorsSelector = (state) => state.sensors;
 
 export const isDataLoaded = createSelector(
   [roomsSelector, lightsSelector, scenesSelector, sensorsSelector],
-  (rooms, lights, scenes, sensors) => rooms && lights && scenes && sensors
+  (rooms, lights, scenes, sensors) => !!(rooms && lights && scenes && sensors)
 );

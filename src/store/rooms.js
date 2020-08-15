@@ -23,8 +23,10 @@ export default {
   },
   effects: (dispatch) => ({
     async getRooms() {
-      const rooms = await Gateway.getRooms();
+      const roomsPromise = Gateway.getRooms();
+      const rooms = await roomsPromise;
       dispatch.rooms.setRooms(rooms);
+      return roomsPromise;
     },
     async setRoomState(roomState) {
       const { id, newState: state } = roomState;
