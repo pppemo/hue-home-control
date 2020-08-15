@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es6",
     "module": "esnext",
     "jsx": "react",
     "lib": ["dom", "dom.iterable", "es2019"],
@@ -13,7 +13,12 @@
     "noUnusedParameters": true,
     "removeComments": false,
     "preserveConstEnums": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noLib": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "files": [
+    "node_modules/typescript/lib/lib.d.ts",
+    "node_modules/typescript/lib/lib.es6.d.ts"
+  ]
 }
